@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
     <title>N-Back Pro</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0c0d11">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,7 +41,7 @@
         #app-viewport {
             display: flex; flex-direction: column; width: 100%; height: 100%;
             padding-top: max(10px, env(safe-area-inset-top));
-            padding-left: 18px; padding-right: 18px; padding-bottom: 0 !important;
+            padding-left: 18px; padding-right: 18px; padding-bottom: env(safe-area-inset-bottom);
             transition: height 0.1s;
         }
 
@@ -180,7 +184,8 @@
         #wait-msg { color: var(--text-dim); font-size: 1.2rem; font-weight: 700; }
 
         /* --- ВВОД (утопленное поле) --- */
-        .input-wrapper { flex: 0 0 auto; width: 100%; max-width: 410px; margin: 0 auto; padding-bottom: 0 !important; margin-bottom: -1px; }
+        .input-wrapper { flex: 0 0 auto; width: 100%; max-width: 410px; margin: 0 auto; padding-bottom: 0; }
+        #app-viewport.kb-open { padding-bottom: 0; }
         #attempts-bar { display: none; }
         #game-form { width: 100%; display: flex; gap: 8px; }
         #native-input {
@@ -247,6 +252,9 @@
 </head>
 <body>
 
+    <label id="haptic-label" for="haptic-cb" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></label>
+    <input type="checkbox" switch id="haptic-cb" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
+
     <div id="app-viewport">
 
         <div id="setup-screen">
@@ -278,15 +286,15 @@
                 <div class="params">
                     <div class="param">
                         <label>Уровень N</label>
-                        <div class="picker" data-key="n" data-min="1" data-max="15" data-def="2"><div class="sel"></div><div class="wlist"></div></div>
+                        <div class="picker" data-key="n" data-min="1" data-max="15" data-def="1"><div class="sel"></div><div class="wlist"></div></div>
                     </div>
                     <div class="param">
                         <label>Ответов</label>
-                        <div class="picker" data-key="r" data-min="2" data-max="55" data-def="20"><div class="sel"></div><div class="wlist"></div></div>
+                        <div class="picker" data-key="r" data-min="2" data-max="55" data-def="2"><div class="sel"></div><div class="wlist"></div></div>
                     </div>
                     <div class="param">
                         <label>Время (сек)</label>
-                        <div class="picker" data-key="t" data-min="1" data-max="300" data-def="3"><div class="sel"></div><div class="wlist"></div></div>
+                        <div class="picker" data-key="t" data-min="1" data-max="300" data-def="1"><div class="sel"></div><div class="wlist"></div></div>
                     </div>
                 </div>
 
@@ -353,6 +361,8 @@
         function resizeHandler() {
             if (!viewport) return;
             appContainer.style.height = `${viewport.height}px`;
+            const kbOpen = (window.innerHeight - viewport.height) > 100;
+            appContainer.classList.toggle('kb-open', kbOpen);
             window.scrollTo(0, 0);
         }
         if (viewport) {
@@ -471,6 +481,7 @@
 
         // --- ВЫБОР РЕЖИМА ---
         function setMode(mode, btn) {
+            haptic();
             currentMode = mode;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -509,6 +520,7 @@
         }
 
         function startGame() {
+            haptic();
             nLevel = getWheelValue('n');
             targetInputs = getWheelValue('r');
             memoTime = getWheelValue('t');
@@ -771,6 +783,15 @@
             document.getElementById('final-time').innerText = `${m}:${s}`;
         }
 
+        // === ТАКТИЛЬНАЯ ОТДАЧА (iOS 18+ switch-хак + Android Vibration API) ===
+        const hapticLabel = document.getElementById('haptic-label');
+        function haptic() {
+            try {
+                if (navigator.vibrate) navigator.vibrate(8);
+                if (hapticLabel) hapticLabel.click();
+            } catch (e) {}
+        }
+
         // === КОЛЁСА НАСТРОЕК (iOS-стиль) ===
         const WH_ITEM = 30, WH_H = 120, WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
         const wheels = {};
@@ -795,10 +816,11 @@
                 });
             }
             function idx() { return Math.max(0, Math.min(values.length - 1, Math.round(list.scrollTop / WH_ITEM))); }
-            let raf = null;
-            list.addEventListener('scroll', () => { if (raf) return; raf = requestAnimationFrame(() => { render(); picker.dataset.current = values[idx()]; raf = null; }); });
+            let raf = null, lastIdx = -1;
+            list.addEventListener('scroll', () => { if (raf) return; raf = requestAnimationFrame(() => { render(); const ci = idx(); if (ci !== lastIdx) { lastIdx = ci; haptic(); } picker.dataset.current = values[ci]; raf = null; }); });
             const startIdx = Math.max(0, values.indexOf(def));
             list.scrollTop = startIdx * WH_ITEM;
+            lastIdx = startIdx;
             picker.dataset.current = values[startIdx];
             render();
             wheels[key] = { picker, list, values, render };
