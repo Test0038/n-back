@@ -38,6 +38,7 @@
             color: var(--text-main); font-family: 'Nunito', -apple-system, sans-serif;
             background: radial-gradient(120% 70% at 50% -8%, #16171c 0%, #0c0d11 45%, #08090c 100%);
         }
+        html { background-color: #08090c; }
         #app-viewport {
             display: flex; flex-direction: column; width: 100%; height: 100%;
             padding-top: max(10px, env(safe-area-inset-top));
@@ -251,9 +252,6 @@
     </style>
 </head>
 <body>
-
-    <label id="haptic-label" for="haptic-cb" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;"></label>
-    <input type="checkbox" switch id="haptic-cb" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none;">
 
     <div id="app-viewport">
 
@@ -481,7 +479,6 @@
 
         // --- ВЫБОР РЕЖИМА ---
         function setMode(mode, btn) {
-            haptic();
             currentMode = mode;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -520,7 +517,6 @@
         }
 
         function startGame() {
-            haptic();
             nLevel = getWheelValue('n');
             targetInputs = getWheelValue('r');
             memoTime = getWheelValue('t');
@@ -726,7 +722,6 @@
             } else {
                 attempts--;
                 nativeInput.classList.add('input-error');
-                if (navigator.vibrate) navigator.vibrate(200);
 
                 setTimeout(() => {
                     nativeInput.classList.remove('input-error');
@@ -783,15 +778,6 @@
             document.getElementById('final-time').innerText = `${m}:${s}`;
         }
 
-        // === ТАКТИЛЬНАЯ ОТДАЧА (iOS 18+ switch-хак + Android Vibration API) ===
-        const hapticLabel = document.getElementById('haptic-label');
-        function haptic() {
-            try {
-                if (navigator.vibrate) navigator.vibrate(8);
-                if (hapticLabel) hapticLabel.click();
-            } catch (e) {}
-        }
-
         // === КОЛЁСА НАСТРОЕК (iOS-стиль) ===
         const WH_ITEM = 30, WH_H = 120, WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
         const wheels = {};
@@ -816,11 +802,10 @@
                 });
             }
             function idx() { return Math.max(0, Math.min(values.length - 1, Math.round(list.scrollTop / WH_ITEM))); }
-            let raf = null, lastIdx = -1;
-            list.addEventListener('scroll', () => { if (raf) return; raf = requestAnimationFrame(() => { render(); const ci = idx(); if (ci !== lastIdx) { lastIdx = ci; haptic(); } picker.dataset.current = values[ci]; raf = null; }); });
+            let raf = null;
+            list.addEventListener('scroll', () => { if (raf) return; raf = requestAnimationFrame(() => { render(); picker.dataset.current = values[idx()]; raf = null; }); });
             const startIdx = Math.max(0, values.indexOf(def));
             list.scrollTop = startIdx * WH_ITEM;
-            lastIdx = startIdx;
             picker.dataset.current = values[startIdx];
             render();
             wheels[key] = { picker, list, values, render };
