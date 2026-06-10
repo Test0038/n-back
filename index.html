@@ -238,10 +238,6 @@
             border-color: #fff;
             box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 2px rgba(255,255,255,.55);
         }
-        .gcell.ok {
-            border-color: var(--success-color);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 2px rgba(48,209,88,.55), 0 0 12px -2px rgba(48,209,88,.5);
-        }
         #ball {
             position: absolute; inset: 0; margin: auto; width: 36px; height: 36px; border-radius: 50%; pointer-events: none;
             background: radial-gradient(circle at 32% 26%, #cfe3ff 0%, #6aa6ff 26%, #0a84ff 56%, #0658b6 80%, #043a7c 100%);
@@ -255,6 +251,7 @@
         #word-card:not(.compact) + #dual-grid { margin-top: 22px; }
         #dual-grid.shake { animation: shake 0.4s; }
         #dual-grid.grid-error { border-color: var(--error-color); animation: shake 0.4s; box-shadow: inset 0 3px 9px rgba(0,0,0,.75), 0 0 0 1px rgba(255,69,58,.5); }
+        #dual-grid.grid-ok { border-color: var(--success-color); box-shadow: inset 0 3px 9px rgba(0,0,0,.75), 0 0 0 1px rgba(48,209,88,.55), 0 0 18px -4px rgba(48,209,88,.55); }
 
         /* --- ПОВОРОТ ЭКРАНА --- */
         #rotate-overlay {
@@ -269,31 +266,35 @@
 
 
         /* --- СТАТИСТИКА --- */
-        #stats-screen {
+        #setup-screen .menu-content { position: relative; }
+        .stats-cbtn {
+            width: 46px; height: 46px; border-radius: 50%; border: 1px solid #353640; cursor: pointer;
+            color: var(--text-muted); font-family: 'Nunito', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1;
+            background: linear-gradient(180deg, #2c2d34, #212229);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 2px 4px rgba(0,0,0,.4);
+            display: flex; align-items: center; justify-content: center; padding: 0 0 4px;
+        }
+        #stats-corner-btn { position: absolute; top: 6px; right: 0; z-index: 5; padding: 0; }
+        #stats-screen, #detail-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 70;
-            background: var(--bg-color); overflow-y: auto; -webkit-overflow-scrolling: touch;
-            padding: max(10px, env(safe-area-inset-top)) 18px calc(env(safe-area-inset-bottom) + 20px);
+            background: var(--bg-color); display: flex; flex-direction: column;
+            padding: max(10px, env(safe-area-inset-top)) 18px calc(env(safe-area-inset-bottom) + 12px);
         }
-        #stats-screen::-webkit-scrollbar { display: none; }
-        #stats-screen h1 { font-size: 1.9rem; margin: 10px 0 16px; }
-        .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .stile {
-            padding: 12px 8px; border-radius: 14px; text-align: center;
-            background: linear-gradient(180deg, #2c2d34, #212229); border: 1px solid var(--key-border);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
-        }
-        .stile span { display: block; font-size: .72rem; font-weight: 700; color: var(--text-muted); letter-spacing: .4px; margin-bottom: 4px; }
-        .stile b { font-size: 1.35rem; font-weight: 900; font-variant-numeric: tabular-nums; }
-        #stats-chart { width: 100%; height: 64px; display: block; }
+        .stats-head { display: grid; grid-template-columns: 46px 1fr 46px; align-items: center; margin: 8px 0 14px; flex: 0 0 auto; }
+        .stats-title { text-align: center; font-size: 1.5rem; font-weight: 900; }
+        #stats-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        #stats-list::-webkit-scrollbar { display: none; }
+        #detail-screen .menu-content { width: 100%; max-width: 410px; margin: 0 auto; }
         .hrow {
             display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 12px; margin-bottom: 8px;
             border-radius: 14px; background: linear-gradient(180deg, #2c2d34, #212229); border: 1px solid var(--key-border);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.06); cursor: pointer;
         }
-        .hmain { flex: 1; min-width: 0; }
+        .hrow.agg { cursor: default; }
+        .hmain { flex: 1; min-width: 0; pointer-events: none; }
         .hmain b { display: block; font-size: .92rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .hmain span { display: block; font-size: .75rem; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
-        .hacc { font-size: 1.05rem; font-weight: 900; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+        .hacc { font-size: 1.05rem; font-weight: 900; font-variant-numeric: tabular-nums; flex: 0 0 auto; pointer-events: none; }
         .hdel {
             flex: 0 0 auto; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--key-border);
             background: linear-gradient(180deg, #2c2d34, #212229); color: var(--text-muted); font-family: 'Nunito', sans-serif;
@@ -301,12 +302,6 @@
         }
         .hdel.arm { border-color: var(--error-color); color: #fff; background: linear-gradient(180deg, #d9453a, #b3362d); }
         .hempty { text-align: center; color: var(--text-dim); font-size: .85rem; font-weight: 700; padding: 8px 0 4px; }
-        button.main-btn.btn-dim {
-            background: linear-gradient(180deg, #2c2d34, #212229); border-bottom: 2px solid #16171b;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 6px 12px -7px rgba(0,0,0,.6); margin-top: 12px;
-            font-size: 1.05rem;
-        }
-        button.main-btn.btn-dim.arm { background: linear-gradient(180deg, #d9453a, #b3362d); border-bottom-color: #8c2a23; }
         .kb-open .header { margin: 4px 0; }
 
 
@@ -350,6 +345,7 @@
 
         <div id="setup-screen">
             <div class="menu-content">
+                <button class="stats-cbtn" id="stats-corner-btn" onclick="showStats()" aria-label="Статистика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" width="20" height="20"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="11"/></svg></button>
                 <h1>N-Back</h1>
 
                 <div class="settings-block">
@@ -391,7 +387,6 @@
                 </div>
 
                 <button class="main-btn" onclick="startGame()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg> НАЧАТЬ</button>
-                <button class="main-btn btn-dim" onclick="showStats()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="20" x2="4" y2="12"/><line x1="10" y1="20" x2="10" y2="6"/><line x1="16" y1="20" x2="16" y2="10"/><line x1="22" y1="20" x2="22" y2="14"/></svg> СТАТИСТИКА</button>
             </div>
         </div>
 
@@ -465,30 +460,34 @@
     </div>
 
     <div id="stats-screen" class="hidden">
+        <div class="stats-head">
+            <button class="stats-cbtn" onclick="hideStats()" aria-label="Назад">‹</button>
+            <div class="stats-title">Статистика</div>
+            <div></div>
+        </div>
+        <div id="stats-list"></div>
+    </div>
+
+    <div id="detail-screen" class="hidden">
+        <div class="stats-head">
+            <button class="stats-cbtn" onclick="hideDetail()" aria-label="Назад">‹</button>
+            <div class="stats-title" id="detail-title"></div>
+            <div></div>
+        </div>
         <div class="menu-content">
-            <h1>Статистика</h1>
             <div class="settings-block">
-                <div class="sgrid">
-                    <div class="stile"><span>СЕССИЙ</span><b id="st-sessions">0</b></div>
-                    <div class="stile"><span>РАУНДОВ</span><b id="st-rounds">0</b></div>
-                    <div class="stile"><span>ТОЧНОСТЬ С 1-Й</span><b id="st-acc">0%</b></div>
-                    <div class="stile"><span>ДНЕЙ ПОДРЯД</span><b id="st-streak">0</b></div>
+                <div class="result-stats">
+                    <div class="rstat"><span>Режим</span><b id="det-mode"></b></div>
+                    <div class="rstat"><span>Уровень</span><b id="det-level"></b></div>
+                    <div class="rstat"><span>Решено</span><b id="det-score"></b></div>
+                    <div class="rstat"><span>Точность (с 1-й)</span><b id="det-acc"></b></div>
+                    <div class="rstat"><span>Ошибочных попыток</span><b id="det-wrong"></b></div>
+                    <div class="rstat"><span>Провалено</span><b id="det-fail"></b></div>
+                    <div class="rstat"><span>Среднее время ответа</span><b id="det-avg"></b></div>
+                    <div class="rstat" id="det-dual-row" style="display:none"><span>Ошибки: слово / позиция</span><b id="det-dual"></b></div>
+                    <div class="rstat"><span>Время</span><b id="det-time"></b></div>
                 </div>
             </div>
-            <div class="settings-block">
-                <div class="block-title">ПРОГРЕСС · ПОСЛЕДНИЕ 20</div>
-                <svg id="stats-chart" viewBox="0 0 220 64" preserveAspectRatio="none"></svg>
-            </div>
-            <div class="settings-block">
-                <div class="block-title">ИСТОРИЯ</div>
-                <div id="stats-list"></div>
-            </div>
-            <div class="settings-block hidden" id="agg-block">
-                <div class="block-title">АРХИВ ПО МЕСЯЦАМ</div>
-                <div id="agg-list"></div>
-            </div>
-            <button class="main-btn btn-dim" data-label="ОЧИСТИТЬ СТАТИСТИКУ" data-confirm="ТОЧНО ОЧИСТИТЬ?" onclick="clearAllStats(this)">ОЧИСТИТЬ СТАТИСТИКУ</button>
-            <button class="main-btn" onclick="hideStats()">НАЗАД</button>
         </div>
     </div>
 
@@ -653,8 +652,8 @@
         }
         function clearCellStates() {
             selectedCell = null;
-            gridCells.forEach(c => c.classList.remove('sel', 'reveal-cell', 'ok'));
-            gridEl.classList.remove('shake', 'grid-error');
+            gridCells.forEach(c => c.classList.remove('sel', 'reveal-cell'));
+            gridEl.classList.remove('shake', 'grid-error', 'grid-ok');
         }
         gridCells.forEach((cell, idx) => {
             cell.addEventListener('pointerdown', (e) => {
@@ -697,6 +696,7 @@
             resultScreen.classList.add('hidden');
             pauseOverlay.classList.add('hidden');
             statsScreen.classList.add('hidden');
+            detailScreen.classList.add('hidden');
         }
 
         function startGame() {
@@ -930,7 +930,7 @@
             if (isCorrect) {
                 isProcessing = true;
                 nativeInput.classList.add('input-success');
-                if (currentMode === 'dual' && ballEl.parentNode) ballEl.parentNode.classList.add('ok');
+                if (currentMode === 'dual') gridEl.classList.add('grid-ok');
                 if (attempts === 3) sessionStats.first++; else if (attempts === 2) sessionStats.second++; else sessionStats.third++;
                 sessionStats.msSum += Date.now() - roundStartMs - roundPausedMs;
                 sessionStats.msCount++;
@@ -1036,6 +1036,7 @@
         };
         const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
         const statsScreen = document.getElementById('stats-screen');
+        const detailScreen = document.getElementById('detail-screen');
 
         function loadStats() {
             try {
@@ -1069,27 +1070,43 @@
         function fmtDur(sec) {
             return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
         }
-        function calcStreak(sessions) {
-            const keyOf = d => d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
-            const days = new Set(sessions.map(sess => keyOf(new Date(sess.d))));
-            if (!days.size) return 0;
-            let streak = 0;
-            const cur = new Date();
-            if (!days.has(keyOf(cur))) cur.setDate(cur.getDate() - 1);
-            while (days.has(keyOf(cur))) { streak++; cur.setDate(cur.getDate() - 1); }
-            return streak;
-        }
-
         function showStats() {
             renderStats();
             setupScreen.classList.add('hidden');
             statsScreen.classList.remove('hidden');
-            statsScreen.scrollTop = 0;
         }
         function hideStats() {
             disarmDelete();
             statsScreen.classList.add('hidden');
             setupScreen.classList.remove('hidden');
+        }
+        function openDetail(ts) {
+            const st = loadStats();
+            const x = st.sessions.find(sess => sess.d === ts);
+            if (!x) return;
+            document.getElementById('detail-title').innerText = fmtDate(x.d);
+            document.getElementById('det-mode').innerText = MODE_NAMES[x.mode] || x.mode;
+            document.getElementById('det-level').innerText = x.n + '-Back';
+            document.getElementById('det-score').innerText = (x.rounds - x.fail) + ' / ' + x.rounds;
+            document.getElementById('det-acc').innerText = (x.rounds ? Math.round(x.first / x.rounds * 100) : 0) + '%';
+            document.getElementById('det-wrong').innerText = x.wrong;
+            document.getElementById('det-fail').innerText = x.fail;
+            document.getElementById('det-avg').innerText = (x.avgMs / 1000).toFixed(1) + ' с';
+            document.getElementById('det-time').innerText = fmtDur(x.dur);
+            const dr = document.getElementById('det-dual-row');
+            if (x.mode === 'dual') {
+                dr.style.display = '';
+                document.getElementById('det-dual').innerText = x.wErr + ' / ' + x.pErr;
+            } else {
+                dr.style.display = 'none';
+            }
+            disarmDelete();
+            statsScreen.classList.add('hidden');
+            detailScreen.classList.remove('hidden');
+        }
+        function hideDetail() {
+            detailScreen.classList.add('hidden');
+            statsScreen.classList.remove('hidden');
         }
 
         let armedBtn = null, armedTimer = null;
@@ -1108,9 +1125,6 @@
             btn.textContent = btn.dataset.confirm || 'Удалить?';
             armedTimer = setTimeout(disarmDelete, 2500);
         }
-        function clearAllStats(btn) {
-            armOrFire(btn, () => { saveStats({ sessions: [], agg: {} }); renderStats(); });
-        }
         function deleteSession(ts) {
             const st = loadStats();
             const i = st.sessions.findIndex(sess => sess.d === ts);
@@ -1128,78 +1142,43 @@
             disarmDelete();
             const st = loadStats();
             const det = st.sessions;
-            const aggEntries = Object.entries(st.agg);
-
-            let sess = det.length, rounds = 0, first = 0;
-            det.forEach(x => { rounds += x.rounds; first += x.first; });
-            aggEntries.forEach(([k, a]) => { sess += a.s; rounds += a.r; first += a.first; });
-            document.getElementById('st-sessions').innerText = sess;
-            document.getElementById('st-rounds').innerText = rounds;
-            document.getElementById('st-acc').innerText = (rounds ? Math.round(first / rounds * 100) : 0) + '%';
-            document.getElementById('st-streak').innerText = calcStreak(det);
-
-            const chart = document.getElementById('stats-chart');
-            const last = det.slice(-20);
-            if (!last.length) {
-                chart.innerHTML = '<text x="110" y="36" text-anchor="middle" fill="#6c6d76" font-size="11" font-family="Nunito, sans-serif">Пока нет данных</text>';
-            } else {
-                const bw = 220 / 20;
-                let svg = '<line x1="0" y1="32" x2="220" y2="32" stroke="#2e2f37" stroke-width="1" stroke-dasharray="3 3"/>';
-                last.forEach((x, i) => {
-                    const a = x.rounds ? x.first / x.rounds : 0;
-                    const h = Math.max(2, Math.round(a * 60));
-                    const px = 220 - (last.length - i) * bw + 1.5;
-                    svg += '<rect x="' + px + '" y="' + (64 - h) + '" width="' + (bw - 3) + '" height="' + h + '" rx="2" fill="' + (a >= 0.8 ? '#30d158' : '#3d8bff') + '"/>';
-                });
-                chart.innerHTML = svg;
-            }
-
+            const aggEntries = Object.entries(st.agg).sort((x, y) => y[0].localeCompare(x[0]));
             const listEl = document.getElementById('stats-list');
-            if (!det.length) {
+            if (!det.length && !aggEntries.length) {
                 listEl.innerHTML = '<div class="hempty">Сыграй партию — она появится здесь</div>';
-            } else {
-                let html = det.slice(-150).reverse().map(x => {
-                    const a = x.rounds ? Math.round(x.first / x.rounds * 100) : 0;
-                    return '<div class="hrow" data-ts="' + x.d + '">' +
-                        '<div class="hmain"><b>' + (MODE_NAMES[x.mode] || x.mode) + ' · ' + x.n + '-Back</b>' +
-                        '<span>' + fmtDate(x.d) + ' · ' + x.rounds + ' раундов · ' + (x.avgMs / 1000).toFixed(1) + ' с/ответ</span></div>' +
-                        '<div class="hacc">' + a + '%</div>' +
-                        '<button class="hdel" data-label="✕">✕</button></div>';
-                }).join('');
-                if (det.length > 150) html += '<div class="hempty">… и ещё ' + (det.length - 150) + ' в памяти</div>';
-                listEl.innerHTML = html;
+                return;
             }
-
-            const aggBlock = document.getElementById('agg-block');
-            const aggList = document.getElementById('agg-list');
-            if (!aggEntries.length) {
-                aggBlock.classList.add('hidden');
-            } else {
-                aggBlock.classList.remove('hidden');
-                aggList.innerHTML = aggEntries.sort((x, y) => y[0].localeCompare(x[0])).map(([key, a]) => {
-                    const ym = key.split('|')[0], mode = key.split('|')[1];
-                    const yy = ym.split('-')[0], mm = ym.split('-')[1];
-                    const acc2 = a.r ? Math.round(a.first / a.r * 100) : 0;
-                    return '<div class="hrow" data-agg="' + key + '">' +
-                        '<div class="hmain"><b>' + MONTHS_RU[+mm - 1] + ' ' + yy + ' · ' + (MODE_NAMES[mode] || mode) + '</b>' +
-                        '<span>' + a.s + ' сессий · до ' + a.nMax + '-Back · ' + (a.msSum / a.s / 1000).toFixed(1) + ' с/ответ</span></div>' +
-                        '<div class="hacc">' + acc2 + '%</div>' +
-                        '<button class="hdel" data-label="✕">✕</button></div>';
-                }).join('');
-            }
+            let html = det.slice().reverse().map(x => {
+                const a = x.rounds ? Math.round(x.first / x.rounds * 100) : 0;
+                return '<div class="hrow" data-ts="' + x.d + '">' +
+                    '<div class="hmain"><b>' + (MODE_NAMES[x.mode] || x.mode) + ' · ' + x.n + '-Back</b>' +
+                    '<span>' + fmtDate(x.d) + ' · ' + x.rounds + ' ответов · ' + (x.avgMs / 1000).toFixed(1) + ' с/ответ</span></div>' +
+                    '<div class="hacc">' + a + '%</div>' +
+                    '<button class="hdel" data-label="✕">✕</button></div>';
+            }).join('');
+            html += aggEntries.map(([key, a]) => {
+                const ym = key.split('|')[0], mode = key.split('|')[1];
+                const yy = ym.split('-')[0], mm = ym.split('-')[1];
+                const acc2 = a.r ? Math.round(a.first / a.r * 100) : 0;
+                return '<div class="hrow agg" data-agg="' + key + '">' +
+                    '<div class="hmain"><b>' + MONTHS_RU[+mm - 1] + ' ' + yy + ' · ' + (MODE_NAMES[mode] || mode) + '</b>' +
+                    '<span>Архив · ' + a.s + ' сессий · до ' + a.nMax + '-Back · ' + (a.msSum / a.s / 1000).toFixed(1) + ' с/ответ</span></div>' +
+                    '<div class="hacc">' + acc2 + '%</div>' +
+                    '<button class="hdel" data-label="✕">✕</button></div>';
+            }).join('');
+            listEl.innerHTML = html;
         }
 
         document.getElementById('stats-list').addEventListener('click', e => {
             const btn = e.target.closest('.hdel');
-            if (!btn) return;
-            const ts = +btn.closest('.hrow').dataset.ts;
-            armOrFire(btn, () => deleteSession(ts));
-        });
-        document.getElementById('agg-list').addEventListener('click', e => {
-            const btn = e.target.closest('.hdel');
-            if (!btn) return;
-            const key = btn.closest('.hrow').dataset.agg;
-            armOrFire(btn, () => deleteAgg(key));
+            const row = e.target.closest('.hrow');
+            if (!row) return;
+            if (btn) {
+                if (row.dataset.ts) armOrFire(btn, () => deleteSession(+row.dataset.ts));
+                else if (row.dataset.agg) armOrFire(btn, () => deleteAgg(row.dataset.agg));
+                return;
+            }
+            if (row.dataset.ts) openDetail(+row.dataset.ts);
         });
 
 
