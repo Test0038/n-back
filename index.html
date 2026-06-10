@@ -220,7 +220,7 @@
         #dual-grid {
             width: 208px; height: 208px; box-sizing: border-box; padding: 12px;
             margin: 0 auto; border-radius: 22px; flex: 0 0 auto;
-            background: linear-gradient(180deg, #15161b 0%, #0f1014 100%); border: 1px solid #2a2b32;
+            background: linear-gradient(180deg, #15161b 0%, #0f1014 100%); border: 1px solid #3a3b46;
             box-shadow: inset 0 3px 9px rgba(0,0,0,.75), inset 0 -2px 6px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.04);
             display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap: 8px;
         }
@@ -238,6 +238,10 @@
             border-color: #fff;
             box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 2px rgba(255,255,255,.55);
         }
+        .gcell.ok {
+            border-color: var(--success-color);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 2px rgba(48,209,88,.55), 0 0 12px -2px rgba(48,209,88,.5);
+        }
         #ball {
             position: absolute; inset: 0; margin: auto; width: 36px; height: 36px; border-radius: 50%; pointer-events: none;
             background: radial-gradient(circle at 32% 26%, #cfe3ff 0%, #6aa6ff 26%, #0a84ff 56%, #0658b6 80%, #043a7c 100%);
@@ -245,8 +249,8 @@
             animation: ballpop .28s cubic-bezier(.34,1.56,.64,1);
         }
         @keyframes ballpop { from { transform: scale(.45); opacity: .4; } to { transform: scale(1); opacity: 1; } }
-        #word-card.compact { height: 104px; min-height: 104px; margin-bottom: 0; }
-        #word-card.compact + #dual-grid { margin-top: 14px; }
+        #word-card.compact { height: 96px; min-height: 96px; margin-bottom: 0; }
+        #word-card.compact + #dual-grid { margin-top: 10px; margin-bottom: 12px; }
         #word-card.compact .countdown-big { font-size: 3rem !important; }
         #word-card:not(.compact) + #dual-grid { margin-top: 22px; }
         #dual-grid.shake { animation: shake 0.4s; }
@@ -262,6 +266,48 @@
         #rotate-overlay .rot-title { font-size: 1.25rem; font-weight: 800; color: #fff; line-height: 1.4; }
         @keyframes rotHint { from { transform: rotate(-90deg); } to { transform: rotate(0deg); } }
         @media (orientation: landscape) { #rotate-overlay { display: flex; } }
+
+
+        /* --- СТАТИСТИКА --- */
+        #stats-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 70;
+            background: var(--bg-color); overflow-y: auto; -webkit-overflow-scrolling: touch;
+            padding: max(10px, env(safe-area-inset-top)) 18px calc(env(safe-area-inset-bottom) + 20px);
+        }
+        #stats-screen::-webkit-scrollbar { display: none; }
+        #stats-screen h1 { font-size: 1.9rem; margin: 10px 0 16px; }
+        .sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stile {
+            padding: 12px 8px; border-radius: 14px; text-align: center;
+            background: linear-gradient(180deg, #2c2d34, #212229); border: 1px solid var(--key-border);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+        }
+        .stile span { display: block; font-size: .72rem; font-weight: 700; color: var(--text-muted); letter-spacing: .4px; margin-bottom: 4px; }
+        .stile b { font-size: 1.35rem; font-weight: 900; font-variant-numeric: tabular-nums; }
+        #stats-chart { width: 100%; height: 64px; display: block; }
+        .hrow {
+            display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 12px; margin-bottom: 8px;
+            border-radius: 14px; background: linear-gradient(180deg, #2c2d34, #212229); border: 1px solid var(--key-border);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+        }
+        .hmain { flex: 1; min-width: 0; }
+        .hmain b { display: block; font-size: .92rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .hmain span { display: block; font-size: .75rem; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
+        .hacc { font-size: 1.05rem; font-weight: 900; font-variant-numeric: tabular-nums; flex: 0 0 auto; }
+        .hdel {
+            flex: 0 0 auto; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 10px; border: 1px solid var(--key-border);
+            background: linear-gradient(180deg, #2c2d34, #212229); color: var(--text-muted); font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: .85rem; cursor: pointer;
+        }
+        .hdel.arm { border-color: var(--error-color); color: #fff; background: linear-gradient(180deg, #d9453a, #b3362d); }
+        .hempty { text-align: center; color: var(--text-dim); font-size: .85rem; font-weight: 700; padding: 8px 0 4px; }
+        button.main-btn.btn-dim {
+            background: linear-gradient(180deg, #2c2d34, #212229); border-bottom: 2px solid #16171b;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 6px 12px -7px rgba(0,0,0,.6); margin-top: 12px;
+            font-size: 1.05rem;
+        }
+        button.main-btn.btn-dim.arm { background: linear-gradient(180deg, #d9453a, #b3362d); border-bottom-color: #8c2a23; }
+        .kb-open .header { margin: 4px 0; }
 
 
         .hidden { display: none !important; }
@@ -345,6 +391,7 @@
                 </div>
 
                 <button class="main-btn" onclick="startGame()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg> НАЧАТЬ</button>
+                <button class="main-btn btn-dim" onclick="showStats()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="20" x2="4" y2="12"/><line x1="10" y1="20" x2="10" y2="6"/><line x1="16" y1="20" x2="16" y2="10"/><line x1="22" y1="20" x2="22" y2="14"/></svg> СТАТИСТИКА</button>
             </div>
         </div>
 
@@ -402,15 +449,49 @@
                 <div class="result-emoji">✓</div>
                 <h1 class="result-title">Готово!</h1>
                 <div class="result-stats">
+                    <div class="rstat"><span>Режим</span><b id="res-mode"></b></div>
                     <div class="rstat"><span>Уровень</span><b id="res-level"></b></div>
-                    <div class="rstat"><span>Верно</span><b id="final-score"></b></div>
-                    <div class="rstat"><span>Точность</span><b id="final-accuracy"></b></div>
+                    <div class="rstat"><span>Решено</span><b id="final-score"></b></div>
+                    <div class="rstat"><span>Точность (с 1-й)</span><b id="final-accuracy"></b></div>
+                    <div class="rstat"><span>Ошибочных попыток</span><b id="res-wrong"></b></div>
+                    <div class="rstat"><span>Провалено</span><b id="res-fail"></b></div>
+                    <div class="rstat"><span>Среднее время ответа</span><b id="res-avg"></b></div>
+                    <div class="rstat" id="res-dual-row" style="display:none"><span>Ошибки: слово / позиция</span><b id="res-dual"></b></div>
                     <div class="rstat"><span>Время</span><b id="final-time"></b></div>
                 </div>
             </div>
             <button class="main-btn" onclick="showSetup()">МЕНЮ</button>
         </div>
     </div>
+
+    <div id="stats-screen" class="hidden">
+        <div class="menu-content">
+            <h1>Статистика</h1>
+            <div class="settings-block">
+                <div class="sgrid">
+                    <div class="stile"><span>СЕССИЙ</span><b id="st-sessions">0</b></div>
+                    <div class="stile"><span>РАУНДОВ</span><b id="st-rounds">0</b></div>
+                    <div class="stile"><span>ТОЧНОСТЬ С 1-Й</span><b id="st-acc">0%</b></div>
+                    <div class="stile"><span>ДНЕЙ ПОДРЯД</span><b id="st-streak">0</b></div>
+                </div>
+            </div>
+            <div class="settings-block">
+                <div class="block-title">ПРОГРЕСС · ПОСЛЕДНИЕ 20</div>
+                <svg id="stats-chart" viewBox="0 0 220 64" preserveAspectRatio="none"></svg>
+            </div>
+            <div class="settings-block">
+                <div class="block-title">ИСТОРИЯ</div>
+                <div id="stats-list"></div>
+            </div>
+            <div class="settings-block hidden" id="agg-block">
+                <div class="block-title">АРХИВ ПО МЕСЯЦАМ</div>
+                <div id="agg-list"></div>
+            </div>
+            <button class="main-btn btn-dim" data-label="ОЧИСТИТЬ СТАТИСТИКУ" data-confirm="ТОЧНО ОЧИСТИТЬ?" onclick="clearAllStats(this)">ОЧИСТИТЬ СТАТИСТИКУ</button>
+            <button class="main-btn" onclick="hideStats()">НАЗАД</button>
+        </div>
+    </div>
+
 
     <script>
         const viewport = window.visualViewport;
@@ -502,6 +583,10 @@
         let recallIndex = 0;
         let attempts = 3;
         let selectedCell = null;
+        let sessionStats = null;
+        let roundStartMs = 0;
+        let roundPausedMs = 0;
+        let pauseStartedAt = 0;
         let isGameRunning = false;
         let isPaused = false;
         let needsInput = false;
@@ -568,7 +653,7 @@
         }
         function clearCellStates() {
             selectedCell = null;
-            gridCells.forEach(c => c.classList.remove('sel', 'reveal-cell'));
+            gridCells.forEach(c => c.classList.remove('sel', 'reveal-cell', 'ok'));
             gridEl.classList.remove('shake', 'grid-error');
         }
         gridCells.forEach((cell, idx) => {
@@ -611,6 +696,7 @@
             gameScreen.classList.add('hidden');
             resultScreen.classList.add('hidden');
             pauseOverlay.classList.add('hidden');
+            statsScreen.classList.add('hidden');
         }
 
         function startGame() {
@@ -641,6 +727,7 @@
             hideBall();
             wordCard.classList.remove('compact');
             gridEl.classList.toggle('hidden', currentMode !== 'dual');
+            sessionStats = { first: 0, second: 0, third: 0, fail: 0, wrong: 0, wErr: 0, pErr: 0, msSum: 0, msCount: 0 };
 
             totalSeconds = 0;
             timerDisplay.innerText = "00:00";
@@ -678,9 +765,11 @@
                 clearInterval(cardTimerInterval);
                 pauseOverlay.classList.remove('hidden');
                 nativeInput.blur();
+                pauseStartedAt = Date.now();
             } else {
                 pauseOverlay.classList.add('hidden');
                 resumeSchedule();
+                if (needsInput && roundStartMs) roundPausedMs += Date.now() - pauseStartedAt;
                 if (needsInput) {
                     if (!isProcessing) nativeInput.focus();
                 } else {
@@ -788,6 +877,9 @@
                 
                 setTimeout(() => { if (isGameRunning && !isPaused) nativeInput.focus(); }, 50);
 
+                roundStartMs = Date.now();
+                roundPausedMs = 0;
+
             } else {
                 wordCard.classList.remove('hidden');
                 inputArea.classList.add('hidden');
@@ -838,9 +930,18 @@
             if (isCorrect) {
                 isProcessing = true;
                 nativeInput.classList.add('input-success');
+                if (currentMode === 'dual' && ballEl.parentNode) ballEl.parentNode.classList.add('ok');
+                if (attempts === 3) sessionStats.first++; else if (attempts === 2) sessionStats.second++; else sessionStats.third++;
+                sessionStats.msSum += Date.now() - roundStartMs - roundPausedMs;
+                sessionStats.msCount++;
                 finishRound(true);
             } else {
                 attempts--;
+                sessionStats.wrong++;
+                if (currentMode === 'dual') {
+                    if (!wordOK) sessionStats.wErr++;
+                    if (!posOK) sessionStats.pErr++;
+                }
                 if (!wordOK) nativeInput.classList.add('input-error');
                 if (!posOK) {
                     gridEl.classList.add('grid-error');
@@ -855,6 +956,9 @@
 
                 if (attempts <= 0) {
                     isProcessing = true;
+                    sessionStats.fail++;
+                    sessionStats.msSum += Date.now() - roundStartMs - roundPausedMs;
+                    sessionStats.msCount++;
                     // ПОКАЗ ПРАВИЛЬНОГО ОТВЕТА (БЕЛЫМ)
                     schedule(() => {
                         nativeInput.value = targetAnswer;
@@ -874,7 +978,7 @@
             if (success) correctCount++;
             updateProgress();
             if (success) {
-                schedule(nextTurn, 400);
+                schedule(nextTurn, 600);
             } else {
                 nextTurn();
             }
@@ -894,14 +998,210 @@
             nativeInput.blur();
             gameScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
+
+            const ss = sessionStats;
+            const avgMs = Math.round(ss.msSum / Math.max(1, ss.msCount));
+            const acc = targetInputs > 0 ? Math.round(ss.first / targetInputs * 100) : 0;
+
+            document.getElementById('res-mode').innerText = MODE_NAMES[currentMode] || currentMode;
             document.getElementById('res-level').innerText = nLevel + "-Back";
             document.getElementById('final-score').innerText = correctCount + " / " + targetInputs;
-            const acc = targetInputs > 0 ? Math.round(correctCount / targetInputs * 100) : 0;
             document.getElementById('final-accuracy').innerText = acc + "%";
-            const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-            const s = (totalSeconds % 60).toString().padStart(2, '0');
-            document.getElementById('final-time').innerText = `${m}:${s}`;
+            document.getElementById('res-wrong').innerText = ss.wrong;
+            document.getElementById('res-fail').innerText = ss.fail;
+            document.getElementById('res-avg').innerText = (avgMs / 1000).toFixed(1) + " с";
+            document.getElementById('final-time').innerText = fmtDur(totalSeconds);
+            const dualRow = document.getElementById('res-dual-row');
+            if (currentMode === 'dual') {
+                dualRow.style.display = '';
+                document.getElementById('res-dual').innerText = ss.wErr + ' / ' + ss.pErr;
+            } else {
+                dualRow.style.display = 'none';
+            }
+
+            recordSession({
+                d: Date.now(), mode: currentMode, n: nLevel, memo: memoTime, rounds: targetInputs,
+                first: ss.first, second: ss.second, third: ss.third, fail: ss.fail, wrong: ss.wrong,
+                wErr: ss.wErr, pErr: ss.pErr, avgMs: avgMs, dur: totalSeconds
+            });
         }
+
+        // === СТАТИСТИКА ===
+        const STATS_KEY = 'nback_stats_v1';
+        const STATS_CAP = 2000;
+        const MODE_NAMES = {
+            noun: 'Существительные', verb: 'Глаголы', adj: 'Прилагательные', mix: 'Микс',
+            math_table: 'Таблица умножения', math100: 'Математика 1–100', math500: 'Математика 100–500',
+            super_mix: 'Язык + математика', dual: 'Dual: слово + позиция'
+        };
+        const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+        const statsScreen = document.getElementById('stats-screen');
+
+        function loadStats() {
+            try {
+                const o = JSON.parse(localStorage.getItem(STATS_KEY));
+                if (o && Array.isArray(o.sessions) && o.agg && typeof o.agg === 'object') return o;
+            } catch (e) {}
+            return { sessions: [], agg: {} };
+        }
+        function saveStats(st) {
+            try { localStorage.setItem(STATS_KEY, JSON.stringify(st)); } catch (e) {}
+        }
+        function foldIntoAgg(st, sess) {
+            const dt = new Date(sess.d);
+            const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '|' + sess.mode;
+            const a = st.agg[key] || (st.agg[key] = { s: 0, r: 0, first: 0, wrong: 0, msSum: 0, dur: 0, nMax: 0 });
+            a.s++; a.r += sess.rounds; a.first += sess.first; a.wrong += sess.wrong;
+            a.msSum += sess.avgMs; a.dur += sess.dur;
+            a.nMax = Math.max(a.nMax, sess.n);
+        }
+        function recordSession(rec) {
+            const st = loadStats();
+            st.sessions.push(rec);
+            while (st.sessions.length > STATS_CAP) foldIntoAgg(st, st.sessions.shift());
+            saveStats(st);
+        }
+        function fmtDate(ts) {
+            const d = new Date(ts);
+            const p = n => String(n).padStart(2, '0');
+            return p(d.getDate()) + '.' + p(d.getMonth() + 1) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+        }
+        function fmtDur(sec) {
+            return String(Math.floor(sec / 60)).padStart(2, '0') + ':' + String(sec % 60).padStart(2, '0');
+        }
+        function calcStreak(sessions) {
+            const keyOf = d => d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+            const days = new Set(sessions.map(sess => keyOf(new Date(sess.d))));
+            if (!days.size) return 0;
+            let streak = 0;
+            const cur = new Date();
+            if (!days.has(keyOf(cur))) cur.setDate(cur.getDate() - 1);
+            while (days.has(keyOf(cur))) { streak++; cur.setDate(cur.getDate() - 1); }
+            return streak;
+        }
+
+        function showStats() {
+            renderStats();
+            setupScreen.classList.add('hidden');
+            statsScreen.classList.remove('hidden');
+            statsScreen.scrollTop = 0;
+        }
+        function hideStats() {
+            disarmDelete();
+            statsScreen.classList.add('hidden');
+            setupScreen.classList.remove('hidden');
+        }
+
+        let armedBtn = null, armedTimer = null;
+        function disarmDelete() {
+            if (!armedBtn) return;
+            clearTimeout(armedTimer);
+            armedBtn.classList.remove('arm');
+            armedBtn.textContent = armedBtn.dataset.label || '✕';
+            armedBtn = null;
+        }
+        function armOrFire(btn, fn) {
+            if (armedBtn === btn) { disarmDelete(); fn(); return; }
+            disarmDelete();
+            armedBtn = btn;
+            btn.classList.add('arm');
+            btn.textContent = btn.dataset.confirm || 'Удалить?';
+            armedTimer = setTimeout(disarmDelete, 2500);
+        }
+        function clearAllStats(btn) {
+            armOrFire(btn, () => { saveStats({ sessions: [], agg: {} }); renderStats(); });
+        }
+        function deleteSession(ts) {
+            const st = loadStats();
+            const i = st.sessions.findIndex(sess => sess.d === ts);
+            if (i >= 0) { st.sessions.splice(i, 1); saveStats(st); }
+            renderStats();
+        }
+        function deleteAgg(key) {
+            const st = loadStats();
+            delete st.agg[key];
+            saveStats(st);
+            renderStats();
+        }
+
+        function renderStats() {
+            disarmDelete();
+            const st = loadStats();
+            const det = st.sessions;
+            const aggEntries = Object.entries(st.agg);
+
+            let sess = det.length, rounds = 0, first = 0;
+            det.forEach(x => { rounds += x.rounds; first += x.first; });
+            aggEntries.forEach(([k, a]) => { sess += a.s; rounds += a.r; first += a.first; });
+            document.getElementById('st-sessions').innerText = sess;
+            document.getElementById('st-rounds').innerText = rounds;
+            document.getElementById('st-acc').innerText = (rounds ? Math.round(first / rounds * 100) : 0) + '%';
+            document.getElementById('st-streak').innerText = calcStreak(det);
+
+            const chart = document.getElementById('stats-chart');
+            const last = det.slice(-20);
+            if (!last.length) {
+                chart.innerHTML = '<text x="110" y="36" text-anchor="middle" fill="#6c6d76" font-size="11" font-family="Nunito, sans-serif">Пока нет данных</text>';
+            } else {
+                const bw = 220 / 20;
+                let svg = '<line x1="0" y1="32" x2="220" y2="32" stroke="#2e2f37" stroke-width="1" stroke-dasharray="3 3"/>';
+                last.forEach((x, i) => {
+                    const a = x.rounds ? x.first / x.rounds : 0;
+                    const h = Math.max(2, Math.round(a * 60));
+                    const px = 220 - (last.length - i) * bw + 1.5;
+                    svg += '<rect x="' + px + '" y="' + (64 - h) + '" width="' + (bw - 3) + '" height="' + h + '" rx="2" fill="' + (a >= 0.8 ? '#30d158' : '#3d8bff') + '"/>';
+                });
+                chart.innerHTML = svg;
+            }
+
+            const listEl = document.getElementById('stats-list');
+            if (!det.length) {
+                listEl.innerHTML = '<div class="hempty">Сыграй партию — она появится здесь</div>';
+            } else {
+                let html = det.slice(-150).reverse().map(x => {
+                    const a = x.rounds ? Math.round(x.first / x.rounds * 100) : 0;
+                    return '<div class="hrow" data-ts="' + x.d + '">' +
+                        '<div class="hmain"><b>' + (MODE_NAMES[x.mode] || x.mode) + ' · ' + x.n + '-Back</b>' +
+                        '<span>' + fmtDate(x.d) + ' · ' + x.rounds + ' раундов · ' + (x.avgMs / 1000).toFixed(1) + ' с/ответ</span></div>' +
+                        '<div class="hacc">' + a + '%</div>' +
+                        '<button class="hdel" data-label="✕">✕</button></div>';
+                }).join('');
+                if (det.length > 150) html += '<div class="hempty">… и ещё ' + (det.length - 150) + ' в памяти</div>';
+                listEl.innerHTML = html;
+            }
+
+            const aggBlock = document.getElementById('agg-block');
+            const aggList = document.getElementById('agg-list');
+            if (!aggEntries.length) {
+                aggBlock.classList.add('hidden');
+            } else {
+                aggBlock.classList.remove('hidden');
+                aggList.innerHTML = aggEntries.sort((x, y) => y[0].localeCompare(x[0])).map(([key, a]) => {
+                    const ym = key.split('|')[0], mode = key.split('|')[1];
+                    const yy = ym.split('-')[0], mm = ym.split('-')[1];
+                    const acc2 = a.r ? Math.round(a.first / a.r * 100) : 0;
+                    return '<div class="hrow" data-agg="' + key + '">' +
+                        '<div class="hmain"><b>' + MONTHS_RU[+mm - 1] + ' ' + yy + ' · ' + (MODE_NAMES[mode] || mode) + '</b>' +
+                        '<span>' + a.s + ' сессий · до ' + a.nMax + '-Back · ' + (a.msSum / a.s / 1000).toFixed(1) + ' с/ответ</span></div>' +
+                        '<div class="hacc">' + acc2 + '%</div>' +
+                        '<button class="hdel" data-label="✕">✕</button></div>';
+                }).join('');
+            }
+        }
+
+        document.getElementById('stats-list').addEventListener('click', e => {
+            const btn = e.target.closest('.hdel');
+            if (!btn) return;
+            const ts = +btn.closest('.hrow').dataset.ts;
+            armOrFire(btn, () => deleteSession(ts));
+        });
+        document.getElementById('agg-list').addEventListener('click', e => {
+            const btn = e.target.closest('.hdel');
+            if (!btn) return;
+            const key = btn.closest('.hrow').dataset.agg;
+            armOrFire(btn, () => deleteAgg(key));
+        });
+
 
         // === КОЛЁСА НАСТРОЕК (iOS-стиль) ===
         const WH_ITEM = 30, WH_H = 120, WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
