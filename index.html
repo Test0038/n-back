@@ -528,13 +528,29 @@
         const wordsMix = [...wordsNoun, ...wordsVerb, ...wordsAdj];
         const wordsDual = wordsNoun.filter(w => w.length <= 9);
 
+        // «Мешок» операций: по 2 каждой, перемешаны Фишером–Йетсом — операции
+        // выпадают равномерно на любом отрезке игры (тот же принцип, что в Matematum)
+        let mathBag = [];
+        function resetMathBag() { mathBag = []; }
+        function refillMathBag() {
+            mathBag = ['+', '-', '*', '/', '+', '-', '*', '/'];
+            for (let i = mathBag.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const t = mathBag[i]; mathBag[i] = mathBag[j]; mathBag[j] = t;
+            }
+        }
+
         function generateMathProblem(difficulty) {
             let a, b, op, res;
             const ops = ['+', '-', '*', '/'];
             const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
+            if (!mathBag.length) refillMathBag();
+            op = mathBag.pop();
+            let tries = 0;
+
             while (true) {
-                op = ops[Math.floor(Math.random() * ops.length)];
+                if (++tries > 1000) op = ops[Math.floor(Math.random() * ops.length)]; // страховка: недостижимо, проверено симуляцией
                 
                 if (difficulty === 'math_table') { 
                     if (op === '+') { a = rand(2, 20); b = rand(2, 20); if(a+b > 30) continue; }
@@ -707,6 +723,7 @@
         function startGame() {
             cancelSchedule();
             clearInterval(cardTimerInterval);
+            resetMathBag();
             nLevel = getWheelValue('n');
             targetInputs = getWheelValue('r');
             memoTime = getWheelValue('t');
