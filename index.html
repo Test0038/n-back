@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-    <title>N-Back Pro</title>
+    <title>Matematum</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0c0d11">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
@@ -55,8 +55,8 @@
         .menu-content { width: 100%; max-width: 410px; margin: 0 auto; flex-shrink: 0; }
 
         h1 {
-            margin: 6px 0 18px 0; color: #fff; font-size: 2.5rem; font-weight: 900;
-            text-align: center; letter-spacing: -1.4px;
+            margin: 6px 0 18px 0; color: #fff; font-size: 2.3rem; font-weight: 900;
+            text-align: center; letter-spacing: -1.2px;
             text-shadow: 0 1px 0 #3a3b42, 0 2px 1px rgba(0,0,0,.5), 0 6px 30px rgba(10,132,255,.3);
         }
 
@@ -73,8 +73,8 @@
         }
 
         .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .mode-grid.math3 { grid-template-columns: 1fr 1fr 1fr; }
-        .mode-grid.math1 { grid-template-columns: 1fr; margin-top: 8px; }
+        .mode-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+        .mode-grid + .mode-grid { margin-top: 8px; }
 
         .mode-btn {
             display: flex; align-items: center; justify-content: center; gap: 7px;
@@ -97,8 +97,8 @@
         .super-btn { grid-column: 1 / -1; }
 
         /* --- КОЛЁСА ПАРАМЕТРОВ (iOS-стиль) --- */
-        .params { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 2px; }
-        .param { display: flex; flex-direction: column; align-items: center; }
+        .params { display: flex; justify-content: center; gap: 10px; margin-bottom: 2px; }
+        .param { display: flex; flex-direction: column; align-items: center; width: 140px; }
         .param > label { font-size: .73rem; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; letter-spacing: .3px; }
         .picker {
             position: relative; width: 100%; height: 120px; border-radius: 16px; overflow: hidden;
@@ -125,7 +125,7 @@
             transform-origin: center center; backface-visibility: hidden; will-change: transform, opacity;
         }
 
-        /* --- ГЛАВНАЯ КНОПКА (НАЧАТЬ / общая) --- */
+        /* --- ГЛАВНАЯ КНОПКА --- */
         button.main-btn {
             display: flex; align-items: center; justify-content: center; gap: 10px;
             width: 100%; padding: 16px; border: none; border-radius: 18px; cursor: pointer;
@@ -152,13 +152,17 @@
             transition: transform .1s, box-shadow .1s;
         }
         .control-btn:active { transform: translateY(1px); box-shadow: inset 0 2px 6px rgba(0,0,0,.6); }
-        .info-center { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.3; }
-        #timer, .stats-line { font-size: .95rem; font-weight: 800; color: var(--text-muted); font-variant-numeric: tabular-nums; }
-        #timer { margin-bottom: 2px; }
+        .info-center { display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.25; }
+        .mode-caption {
+            font-size: .66rem; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase;
+            color: var(--text-dim); margin-bottom: 3px; text-shadow: 0 1px 0 rgba(0,0,0,.5);
+            white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+        }
+        #timer { font-size: 1.15rem; font-weight: 900; color: var(--text-dim); font-variant-numeric: tabular-nums; }
 
         .game-area { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; min-height: 0; }
 
-        /* ОБЪЁМНАЯ КАРТОЧКА СТИМУЛА */
+        /* ОБЪЁМНАЯ КАРТОЧКА ПРИМЕРА */
         #word-card {
             width: 100%; max-width: 410px; height: 60%; max-height: 230px; min-height: 165px;
             border-radius: 26px; position: relative; margin-bottom: 22px;
@@ -167,22 +171,17 @@
             box-shadow: inset 0 1px 0 rgba(255,255,255,.08), inset 0 -1px 0 rgba(0,0,0,.5),
                 0 3px 6px rgba(0,0,0,.45), 0 30px 55px -24px rgba(0,0,0,.95);
         }
-        #word-index {
-            position: absolute; top: 16px; width: 100%; text-align: center;
-            font-size: 1rem; font-weight: 800; color: var(--text-muted); opacity: .5; line-height: 1;
-        }
-        #card-timer {
-            position: absolute; bottom: 12px; width: 100%; text-align: center;
-            color: var(--text-muted); opacity: .55; font-size: 1rem; font-weight: 800;
-            font-variant-numeric: tabular-nums; line-height: 1;
+        #progress {
+            position: absolute; top: 15px; width: 100%; text-align: center;
+            font-size: .95rem; font-weight: 800; color: var(--text-muted); opacity: .55;
+            line-height: 1; font-variant-numeric: tabular-nums;
         }
         #word-display {
-            font-size: 2.5rem; font-weight: 900; color: #fff; text-transform: uppercase; margin: 0;
-            text-align: center; word-break: break-word; hyphens: auto; line-height: 1.05; padding: 0 12px;
+            font-size: 3rem; font-weight: 900; color: #fff; margin: 0;
+            text-align: center; line-height: 1.05; padding: 0 12px; white-space: nowrap;
+            font-variant-numeric: tabular-nums;
             text-shadow: 0 2px 8px rgba(0,0,0,.5);
         }
-        .countdown-big { font-size: 5rem !important; color: var(--accent-icon) !important; opacity: .85; text-shadow: 0 4px 24px rgba(61,139,255,.5) !important; }
-        #wait-msg { color: var(--text-dim); font-size: 1.2rem; font-weight: 700; }
 
         /* --- ВВОД (утопленное поле) --- */
         .input-wrapper { flex: 0 0 auto; width: 100%; max-width: 410px; margin: 0 auto; padding-bottom: 0; }
@@ -202,7 +201,7 @@
         }
         #submit-btn {
             width: 60px; flex-shrink: 0; border: none; border-radius: 16px; cursor: pointer; color: #fff;
-            font-size: 1.4rem; display: none; align-items: center; justify-content: center;
+            font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(180deg, #38a0ff 0%, #0a84ff 55%, #0670e0 100%); border-bottom: 2px solid #0559b5;
             box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 6px 12px -2px rgba(10,132,255,.5);
             transition: transform .1s;
@@ -216,43 +215,6 @@
         .input-reveal { border-color: #fff !important; color: #fff !important;
             box-shadow: inset 0 3px 9px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.5) !important; }
 
-        /* --- DUAL: СЕТКА 3×3 --- */
-        #dual-grid {
-            width: 208px; height: 208px; box-sizing: border-box; padding: 12px;
-            margin: 0 auto; border-radius: 22px; flex: 0 0 auto;
-            background: linear-gradient(180deg, #15161b 0%, #0f1014 100%); border: 1px solid #3a3b46;
-            box-shadow: inset 0 3px 9px rgba(0,0,0,.75), inset 0 -2px 6px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.04);
-            display: grid; grid-template-columns: repeat(3, 56px); grid-template-rows: repeat(3, 56px); gap: 8px;
-        }
-        .gcell {
-            position: relative; border-radius: 12px; cursor: pointer;
-            background: linear-gradient(180deg, #2e2f38 0%, #1f2026 100%); border: 1px solid #3c3d48;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 2px 4px rgba(0,0,0,.5);
-            transition: border-color .12s, box-shadow .12s;
-        }
-        .gcell.sel {
-            border-color: #5fa0ff;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 2px rgba(95,160,255,.5), 0 0 12px -2px rgba(61,139,255,.5);
-        }
-        .gcell.reveal-cell {
-            border-color: #fff;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.09), 0 0 0 2px rgba(255,255,255,.55);
-        }
-        #ball {
-            position: absolute; inset: 0; margin: auto; width: 36px; height: 36px; border-radius: 50%; pointer-events: none;
-            background: radial-gradient(circle at 32% 26%, #cfe3ff 0%, #6aa6ff 26%, #0a84ff 56%, #0658b6 80%, #043a7c 100%);
-            box-shadow: 0 7px 12px -4px rgba(0,0,0,.8), 0 0 16px rgba(61,139,255,.4), inset -3px -5px 8px rgba(2,30,80,.6), inset 3px 4px 6px rgba(255,255,255,.35);
-            animation: ballpop .28s cubic-bezier(.34,1.56,.64,1);
-        }
-        @keyframes ballpop { from { transform: scale(.45); opacity: .4; } to { transform: scale(1); opacity: 1; } }
-        #word-card.compact { height: 96px; min-height: 96px; margin-bottom: 0; }
-        #word-card.compact + #dual-grid { margin-top: 10px; margin-bottom: 12px; }
-        #word-card.compact .countdown-big { font-size: 3rem !important; }
-        #word-card:not(.compact) + #dual-grid { margin-top: 22px; }
-        #dual-grid.shake { animation: shake 0.4s; }
-        #dual-grid.grid-error { border-color: var(--error-color); animation: shake 0.4s; box-shadow: inset 0 3px 9px rgba(0,0,0,.75), 0 0 0 1px rgba(255,69,58,.5); }
-        #dual-grid.grid-ok { border-color: var(--success-color); box-shadow: inset 0 3px 9px rgba(0,0,0,.75), 0 0 0 1px rgba(48,209,88,.55), 0 0 18px -4px rgba(48,209,88,.55); }
-
         /* --- ПОВОРОТ ЭКРАНА --- */
         #rotate-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;
@@ -264,7 +226,6 @@
         @keyframes rotHint { from { transform: rotate(-90deg); } to { transform: rotate(0deg); } }
         @media (orientation: landscape) { #rotate-overlay { display: flex; } }
 
-
         /* --- СТАТИСТИКА --- */
         #setup-screen .menu-content { position: relative; }
         .stats-cbtn {
@@ -272,9 +233,11 @@
             color: var(--text-muted); font-family: 'Nunito', sans-serif; font-size: 1.6rem; font-weight: 800; line-height: 1;
             background: linear-gradient(180deg, #2c2d34, #212229);
             box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 2px 4px rgba(0,0,0,.4);
-            display: flex; align-items: center; justify-content: center; padding: 0 0 4px;
+            display: flex; align-items: center; justify-content: center; padding: 0;
         }
-        #stats-corner-btn { position: absolute; top: 6px; right: 0; z-index: 5; padding: 0; }
+        .stats-cbtn svg { width: 20px; height: 20px; }
+        .stats-cbtn.back { padding: 0 0 4px; }
+        #stats-corner-btn { position: absolute; top: 6px; right: 0; z-index: 5; }
         #stats-screen, #detail-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 70;
             background: var(--bg-color); display: flex; flex-direction: column;
@@ -304,7 +267,6 @@
         .hempty { text-align: center; color: var(--text-dim); font-size: .85rem; font-weight: 700; padding: 8px 0 4px; }
         .kb-open .header { margin: 4px 0; }
 
-
         .hidden { display: none !important; }
 
         /* --- ОВЕРЛЕИ --- */
@@ -321,6 +283,8 @@
             box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 6px 12px -7px rgba(0,0,0,.6) !important; margin-top: 12px;
         }
         .result-content { margin: auto; width: 100%; max-width: 410px; }
+        #result-screen .result-content { overflow-y: auto; max-height: 100%; -webkit-overflow-scrolling: touch; }
+        #result-screen .result-content::-webkit-scrollbar { display: none; }
         .result-block { text-align: center; }
         .result-emoji {
             width: 64px; height: 64px; margin: 4px auto 14px; border-radius: 50%;
@@ -345,44 +309,44 @@
 
         <div id="setup-screen">
             <div class="menu-content">
-                <button class="stats-cbtn" id="stats-corner-btn" onclick="showStats()" aria-label="Статистика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" width="20" height="20"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="11"/></svg></button>
-                <h1>N-Back</h1>
+                <button class="stats-cbtn" id="stats-corner-btn" onclick="showStats()" aria-label="Статистика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="9"/></svg></button>
+                <h1>Matematum</h1>
 
                 <div class="settings-block">
-                    <div class="block-title">ЯЗЫК</div>
+                    <div class="block-title">ОПЕРАЦИЯ</div>
                     <div class="mode-grid">
-                        <button class="mode-btn active" onclick="setMode('noun', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Существительные</button>
-                        <button class="mode-btn" onclick="setMode('verb', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Глаголы</button>
-                        <button class="mode-btn" onclick="setMode('adj', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z"/></svg>Прилагательные</button>
-                        <button class="mode-btn" onclick="setMode('mix', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>Микс</button>
-                        <button class="mode-btn super-btn" onclick="setMode('dual', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>DUAL: СЛОВО + ПОЗИЦИЯ</button>
+                        <button class="mode-btn op-btn active" onclick="setOp('add', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Сложение</button>
+                        <button class="mode-btn op-btn" onclick="setOp('sub', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>Вычитание</button>
+                        <button class="mode-btn op-btn" onclick="setOp('mul', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>Умножение</button>
+                        <button class="mode-btn op-btn" onclick="setOp('div', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><circle cx="12" cy="6.5" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="17.5" r="1.4" fill="currentColor" stroke="none"/></svg>Деление</button>
+                        <button class="mode-btn op-btn super-btn" onclick="setOp('mix', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>Микс</button>
+                    </div>
+                    <div class="mode-grid">
+                        <button class="mode-btn super-btn" id="frac-btn" onclick="toggleFrac(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.4"/><circle cx="17.5" cy="17.5" r="2.4"/></svg>Дроби</button>
                     </div>
                 </div>
 
                 <div class="settings-block">
-                    <div class="block-title">МАТЕМАТИКА</div>
-                    <div class="mode-grid math3">
-                        <button class="mode-btn math-btn" onclick="setMode('math_table', this)">Таблица умн.</button>
-                        <button class="mode-btn math-btn" onclick="setMode('math100', this)">1-100</button>
-                        <button class="mode-btn math-btn" onclick="setMode('math500', this)">100-500</button>
+                    <div class="block-title">ДИАПАЗОН</div>
+                    <div class="mode-grid cols3">
+                        <button class="mode-btn range-btn active" onclick="setRange(0, this)">1 - 100</button>
+                        <button class="mode-btn range-btn" onclick="setRange(1, this)">100 - 500</button>
+                        <button class="mode-btn range-btn" onclick="setRange(2, this)">500 - 1k</button>
                     </div>
-                    <div class="mode-grid math1">
-                        <button class="mode-btn super-btn" onclick="setMode('super_mix', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>ЯЗЫК + МАТЕМАТИКА</button>
+                    <div class="mode-grid">
+                        <button class="mode-btn range-btn" onclick="setRange(3, this)">1k - 5k</button>
+                        <button class="mode-btn range-btn" onclick="setRange(4, this)">5k - 10k</button>
                     </div>
                 </div>
 
                 <div class="params">
                     <div class="param">
-                        <label>Уровень N</label>
-                        <div class="picker" data-key="n" data-min="1" data-max="15" data-def="1"><div class="sel"></div><div class="wlist"></div></div>
+                        <label>Примеров в игре</label>
+                        <div class="picker" data-key="cnt" data-min="5" data-max="100" data-step="1" data-def="20"><div class="sel"></div><div class="wlist"></div></div>
                     </div>
                     <div class="param">
-                        <label>Ответов</label>
-                        <div class="picker" data-key="r" data-min="2" data-max="55" data-def="2"><div class="sel"></div><div class="wlist"></div></div>
-                    </div>
-                    <div class="param">
-                        <label>Время (сек)</label>
-                        <div class="picker" data-key="t" data-min="1" data-max="300" data-def="1"><div class="sel"></div><div class="wlist"></div></div>
+                        <label>Время (мин)</label>
+                        <div class="picker" data-key="tmin" data-min="0" data-max="60" data-step="1" data-def="0"><div class="sel"></div><div class="wlist"></div></div>
                     </div>
                 </div>
 
@@ -394,31 +358,24 @@
             <div class="header">
                 <button class="control-btn" onclick="stopGame()">✕</button>
                 <div class="info-center">
+                    <div class="mode-caption" id="display-mode"></div>
                     <div id="timer">00:00</div>
-                    <div class="stats-line"><span id="display-n">2</span>-Back • <span id="progress">0/25</span></div>
                 </div>
                 <button class="control-btn" onclick="togglePause()">II</button>
             </div>
 
             <div class="game-area">
-                <div id="word-card" class="hidden">
-                    <div id="word-index" class="hidden">1</div>
+                <div id="word-card">
+                    <div id="progress">1/20</div>
                     <div id="word-display">...</div>
-                    <div id="card-timer" class="hidden">3</div>
                 </div>
-                <div id="dual-grid" class="hidden">
-                    <div class="gcell"></div><div class="gcell"></div><div class="gcell"></div>
-                    <div class="gcell"></div><div class="gcell"></div><div class="gcell"></div>
-                    <div class="gcell"></div><div class="gcell"></div><div class="gcell"></div>
-                </div>
-                <div id="wait-msg" class="hidden">Запоминаем...</div>
             </div>
 
             <div class="input-wrapper">
-                <div id="input-area" class="hidden">
+                <div id="input-area">
                     <form id="game-form" autocomplete="off" onsubmit="handleFormSubmit(event)">
-                        <input type="text" id="native-input" placeholder="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
-                        <button type="button" id="submit-btn" onclick="submitMath()">➔</button>
+                        <input type="tel" id="native-input" inputmode="decimal" placeholder="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
+                        <button type="button" id="submit-btn" onclick="submitAnswer()">➔</button>
                     </form>
                 </div>
             </div>
@@ -430,7 +387,6 @@
         <svg class="rot-icon" viewBox="0 0 24 24" fill="none" stroke="#5fa0ff" stroke-width="1.6" stroke-linecap="round"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M10.8 18.5h2.4"/></svg>
         <div class="rot-title">Поверните телефон<br>вертикально</div>
     </div>
-
 
     <div id="pause-overlay" class="hidden">
         <h2 class="overlay-title">ПАУЗА</h2>
@@ -445,13 +401,12 @@
                 <h1 class="result-title">Готово!</h1>
                 <div class="result-stats">
                     <div class="rstat"><span>Режим</span><b id="res-mode"></b></div>
-                    <div class="rstat"><span>Уровень</span><b id="res-level"></b></div>
+                    <div class="rstat"><span>Диапазон</span><b id="res-range"></b></div>
                     <div class="rstat"><span>Решено</span><b id="final-score"></b></div>
                     <div class="rstat"><span>Точность (с 1-й)</span><b id="final-accuracy"></b></div>
                     <div class="rstat"><span>Ошибочных попыток</span><b id="res-wrong"></b></div>
                     <div class="rstat"><span>Провалено</span><b id="res-fail"></b></div>
                     <div class="rstat"><span>Среднее время ответа</span><b id="res-avg"></b></div>
-                    <div class="rstat" id="res-dual-row" style="display:none"><span>Ошибки: слово / позиция</span><b id="res-dual"></b></div>
                     <div class="rstat"><span>Время</span><b id="final-time"></b></div>
                 </div>
             </div>
@@ -461,7 +416,7 @@
 
     <div id="stats-screen" class="hidden">
         <div class="stats-head">
-            <button class="stats-cbtn" onclick="hideStats()" aria-label="Назад">‹</button>
+            <button class="stats-cbtn back" onclick="hideStats()" aria-label="Назад">‹</button>
             <div class="stats-title">Статистика</div>
             <div></div>
         </div>
@@ -470,7 +425,7 @@
 
     <div id="detail-screen" class="hidden">
         <div class="stats-head">
-            <button class="stats-cbtn" onclick="hideDetail()" aria-label="Назад">‹</button>
+            <button class="stats-cbtn back" onclick="hideDetail()" aria-label="Назад">‹</button>
             <div class="stats-title" id="detail-title"></div>
             <div></div>
         </div>
@@ -478,19 +433,17 @@
             <div class="settings-block">
                 <div class="result-stats">
                     <div class="rstat"><span>Режим</span><b id="det-mode"></b></div>
-                    <div class="rstat"><span>Уровень</span><b id="det-level"></b></div>
+                    <div class="rstat"><span>Диапазон</span><b id="det-range"></b></div>
                     <div class="rstat"><span>Решено</span><b id="det-score"></b></div>
                     <div class="rstat"><span>Точность (с 1-й)</span><b id="det-acc"></b></div>
                     <div class="rstat"><span>Ошибочных попыток</span><b id="det-wrong"></b></div>
                     <div class="rstat"><span>Провалено</span><b id="det-fail"></b></div>
                     <div class="rstat"><span>Среднее время ответа</span><b id="det-avg"></b></div>
-                    <div class="rstat" id="det-dual-row" style="display:none"><span>Ошибки: слово / позиция</span><b id="det-dual"></b></div>
                     <div class="rstat"><span>Время</span><b id="det-time"></b></div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <script>
         const viewport = window.visualViewport;
@@ -508,95 +461,137 @@
             resizeHandler();
         }
 
-        // --- БАЗЫ СЛОВ ---
-        const vocabNouns = `год человек время дело жизнь день рука раз работа слово место лицо друг глаз вопрос дом сторона страна мир случай голова ребенок сила конец вид система часть город отношение женщина деньги земля машина вода отец проблема право нога решение дверь образ история власть закон война бог голос тысяча книга возможность результат ночь стол имя область статья число компания народ жена группа развитие процесс условие средство свет университет действие солнце любовь слух проект час порядок путь душа помощь рынок очередь письмо армия век ход язык ряд движение огонь директор стена встреча цель школа план информация воздух интерес смерть программа задача опыт тело игра лес двор окно центр семья плечо президент врач номер суд угол учитель район небо совет золото музыка память граница знак форма собака камень боль сын мысль спорт герой дерево здание связь поэт снег сон элемент ухо вера остров банк расход материал воля сад курс река мужик рот край мост лист честь автор вечер цвет полк радость птица круг труп смысл масло дождь экран слеза зверь конкурс танец нос корень песня класс завод удар лидер этап брат стул штаб звук дед метр песок стих хлеб фильм рубль шанс тип смех море зона товар кусок служба характер возраст рыба рост сцена крыша поиск долг вождь мозг итог пиво чай губа дядя черт конь шея танк кадр слой спор вкус след толпа вход риск указ зима мода шум лето пост сбор куст обед вред шарф паук слон цирк бак бокс винт гриб зонт клоп клей лифт пуля торт флаг цепь шина юбка ящик гром холм тигр волк барс рысь краб омар скат кит морж пони овца коза лось енот крот мышь сова гусь утка аист грач стриж удав оса муха блоха клещ моль рак щука карп сом линь агат алмаз болт гипс дерн жесть игла ковш лом маяк нож плуг руль сеть трос узел шип щит якорь азот бром воск газ гель дым йод лак мел пар пух сажа соль торф уран хром цинк шлак бор вяз дуб ива кедр клен липа пальма роза алоэ мак пион ирис анис боб лук рапс рис соя тыква укроп хвощ шпинат вена веко десна жила зуб кожа кость нерв ноготь пуп ребро таз череп бинт вата жгут мазь зонд клизма очки шприц гимн джаз марш нота опера опус ритм соло туш хор балл гейм гол пас сет финт шах мат кросс старт трек ямб хорей стопа слог эпос миф ода сказ жанр стиль тема том бот бриг плот порт трап трюм шлюз ялик крах кризис налог сбыт торг цена чек штраф виза иск кодекс устав ценз штат брак внук вдова зять кум сват тесть тетя атом ватт вольт джоуль ион катод квант ом фаза фон эхо анод диод лампа луч реле ток щуп лев леопард гепард пантера ягуар пума кугуар жираф зебра бегемот носорог буйвол бизон антилопа газель олень косуля кабан медведь барсук выдра бобр ласка горностай соболь куница норка хорёк белка бурундук суслик хомяк ёж дикобраз кролик заяц лиса песец шакал гиена койот динго кенгуру коала вомбат опоссум ленивец броненосец муравьед панда мартышка горилла шимпанзе орангутан павиан лемур бабуин верблюд лама альпака осёл мул жеребец кобыла телёнок баран ягнёнок козёл свинья поросёнок кот кошка котёнок пёс щенок дельфин кашалот касатка нарвал тюлень котик акула мурена осьминог кальмар каракатица креветка медуза угорь сельдь треска лосось форель окунь судак налим карась плотва лещ ёрш пескарь голавль орёл сокол ястреб коршун гриф беркут филин сыч ворон ворона галка сорока дятел кукушка соловей жаворонок ласточка воробей синица снегирь щегол зяблик дрозд скворец иволга чиж голубь горлица журавль цапля фламинго пеликан лебедь селезень индюк петух курица цыплёнок павлин фазан куропатка перепел тетерев глухарь рябчик попугай канарейка страус эму пингвин чайка баклан альбатрос буревестник пчела шмель муравей жук комар мошка слепень овод стрекоза кузнечик саранча сверчок цикада богомол таракан вошь скорпион сороконожка многоножка гусеница бабочка мотылёк светлячок жужелица червяк улитка слизень пиявка кобра гадюка питон ящерица варан игуана хамелеон геккон черепаха крокодил аллигатор лягушка жаба тритон саламандра батон булка пирог пирожок блин оладья ватрушка сухарь баранка бублик печенье пряник вафля кекс рулет бисквит пончик круассан багет лаваш каша крупа гречка пшено овсянка манка перловка макароны лапша спагетти вермишель суп борщ щи бульон солянка рассольник окрошка котлета биток тефтеля фрикаделька гуляш жаркое рагу плов шашлык колбаса сосиска сарделька ветчина бекон сало паштет холодец заливное пельмень вареник голубец фарш стейк отбивная шницель ростбиф буженина окорок грудинка творог сметана сливки кефир ряженка простокваша йогурт маргарин брынза молоко яйцо омлет яичница глазунья варенье джем повидло мармелад зефир пастила халва нуга карамель леденец шоколад какао сок компот кисель морс квас лимонад сироп нектар яблоко груша слива вишня черешня абрикос персик нектарин виноград изюм курага чернослив финик инжир гранат хурма банан апельсин мандарин лимон лайм грейпфрут ананас манго папайя кокос авокадо дыня арбуз кабачок огурец помидор перец баклажан морковь свёкла редис редька репа брюква картофель капуста чеснок петрушка кинза базилик щавель салат фасоль горох чечевица кукуруза орех миндаль фундук арахис фисташка кешью семечка шампиньон опёнок лисичка боровик подберёзовик подосиновик сыроежка груздь рыжик маслёнок волнушка утёс хребет вершина пик склон ущелье овраг долина равнина степь пустыня тундра тайга роща чаща дубрава поляна опушка болото трясина топь ручей родник ключ озеро водоём заводь омут плёс водопад порог стремнина океан залив бухта пролив лиман лагуна риф отмель коса мыс полуостров архипелаг материк континент берег побережье взморье пляж дюна бархан галька валун глыба пещера грот расщелина каньон вулкан кратер гейзер лава магма ледник айсберг сугроб лавина иней изморозь наледь сосулька град ливень морось гроза радуга туман дымка роса заря рассвет закат сумерки облако туча планета комета метеор затмение вихрь смерч буря шторм ураган метель вьюга пурга буран зной стужа мороз оттепель преподаватель воспитатель профессор доцент ректор декан хирург терапевт педиатр окулист стоматолог дантист психолог психиатр невролог кардиолог фельдшер медсестра санитар фармацевт аптекарь ветеринар конструктор механик слесарь токарь фрезеровщик сварщик электрик монтажник наладчик техник чертёжник архитектор каменщик штукатур маляр столяр кровельщик стекольщик сантехник плиточник бетонщик крановщик водитель шофёр таксист дальнобойщик кондуктор пилот лётчик штурман стюардесса капитан матрос боцман кок рыбак моряк космонавт пекарь кондитер кулинар официант бармен бариста кассир продавец консультант менеджер кладовщик грузчик курьер экспедитор бухгалтер экономист финансист банкир аудитор аналитик брокер маклер риелтор страховщик юрист адвокат прокурор нотариус следователь полицейский сыщик детектив охранник сторож пожарный спасатель солдат офицер генерал сержант пограничник разведчик снайпер сапёр программист разработчик тестировщик дизайнер верстальщик скульптор живописец иллюстратор фотограф оператор режиссёр актёр сценарист продюсер композитор дирижёр пианист скрипач гитарист барабанщик певец вокалист танцор балерина писатель журналист корректор переводчик диктор ведущий блогер парикмахер визажист косметолог массажист портной швея сапожник часовщик ювелир кузнец гончар стеклодув пасечник пастух фермер агроном садовник лесник егерь геолог археолог биолог химик физик астроном географ филолог лингвист социолог счастье восторг ликование восхищение умиление симпатия влюблённость страсть азарт печаль тоска уныние хандра скука апатия скорбь отчаяние ужас испуг боязнь паника тревога волнение беспокойство ярость злость бешенство раздражение досада обида негодование возмущение зависть ревность стыд смущение робость застенчивость надменность спесь изумление недоумение растерянность любопытство отвращение брезгливость презрение жалость сострадание сочувствие благодарность вдохновение блаженство гордость надежда мечта держава государство республика империя королевство княжество губерния провинция регион москва петербург новосибирск екатеринбург казань самара омск ростов уфа красноярск пермь воронеж волгоград краснодар саратов тюмень ижевск барнаул иркутск хабаровск ярославль владивосток томск оренбург кемерово рязань астрахань пенза тула киров калининград курск тверь сочи белгород сургут владимир архангельск россия китай индия япония германия франция италия испания британия канада бразилия аргентина мексика египет турция греция польша швеция норвегия финляндия дания бельгия австрия швейцария португалия ирландия исландия украина беларусь казахстан грузия армения монголия вьетнам таиланд индонезия австралия париж лондон берлин рим мадрид прага варшава стокгольм осло амстердам лиссабон афины токио пекин сеул сидней торонто чикаго молекула электрон протон нейтрон изотоп частица кварк фотон вещество соединение реакция раствор кислота щёлочь оксид сплав кристалл минерал руда углерод кислород водород гелий неон натрий калий кальций магний железо медь свинец олово ртуть серебро платина радий энергия масса объём плотность давление теплота волна частота спектр излучение радиация магнетизм электричество заряд напряжение сопротивление мощность ускорение инерция гравитация орбита траектория клетка мембрана белок фермент ген хромосома бактерия микроб организм ткань рефлекс нейрон галактика спутник астероид метеорит туманность созвездие вселенная космос телескоп микроскоп формула теорема уравнение функция вектор матрица интеграл логарифм гипотеза аксиома эксперимент синтез квартира спальня прихожая гостиная кабинет кладовка чердак подвал балкон лоджия потолок ступенька лестница перила крыльцо забор калитка сарай гараж погреб колодец табурет кресло диван кушетка кровать тахта софа шкаф комод тумба полка стеллаж сервант буфет вешалка трюмо ковёр палас дорожка штора занавеска тюль карниз люстра бра торшер ночник светильник абажур подушка одеяло простыня наволочка матрас плед покрывало скатерть салфетка полотенце тарелка блюдце чашка кружка стакан бокал рюмка кувшин графин кофейник заварник кастрюля сковорода сотейник противень половник дуршлаг тёрка сито миска солонка перечница ложка вилка скалка холодильник морозильник плита духовка тостер блендер миксер мясорубка соковыжималка кофемолка пылесос вентилятор обогреватель кондиционер телевизор магнитофон колонка наушники планшет компьютер ноутбук монитор клавиатура принтер сканер розетка выключатель лампочка провод удлинитель радиатор веник совок швабра тряпка корзина метла грабли тяпка лейка шланг иголка нитка напёрсток булавка пуговица крючок расчёска щётка мыло шампунь губка мочалка бритва станок идея понятие суть сущность принцип правило норма метод способ причина следствие вывод довод аргумент доказательство истина ложь обман заблуждение ошибка мнение взгляд позиция убеждение сомнение желание стремление выбор свобода независимость обязанность ответственность совесть достоинство слава успех неудача победа поражение опасность угроза защита безопасность польза добро зло справедливость равенство братство дружба вражда согласие конфликт союз договор обещание клятва тайна загадка чудо судьба участь доля везение удача совпадение вероятность необходимость вечность миг мгновение пространство бесконечность`;
-        const vocabVerbs = `быть мочь сказать говорить знать стать есть хотеть видеть идти думать спросить жить смотреть сидеть иметь делать взять понять казаться давать пойти увидеть дать писать ждать найти остаться решить выйти пройти помнить стоять слушать верить купить уйти начать читать слышать любить отвечать работать спать звать просить играть лежать ходить помочь открыть закрыть терять держать менять забыть искать вести платить простить учить кричать бояться падать садиться встать молчать спешить пить бежать ловить бить гореть ехать лететь петь смеяться желать бросить плакать строить ломать носить тянуть дышать хватать спасти расти везти беречь дарить лечить жалеть варить жарить печь шить мыть брить лить дуть гнуть греть тереть висеть блестеть шуметь звенеть греметь стучать скрипеть пищать жужжать рычать мычать лаять мяукать кусать клевать бодать жалить колоть резать рубить пилить копать пахать сеять жать веять молоть косить грести нести ползти лезть плыть брести цвести пахнуть вянуть киснуть мокнуть сохнуть мерзнуть зябнуть стынуть слепнуть глохнуть пухнуть гаснуть липнуть виснуть тонуть гибнуть крепнуть хрипнуть сипнуть охнуть ахнуть топнуть хлопнуть свистнуть прыгнуть шагнуть кивнуть махнуть мигнуть зевать чихать кашлять икать стонать храпеть сопеть сипеть хрипеть гудеть зудеть болеть терпеть вертеть глядеть свистеть хрустеть шелестеть шуршать ворчать бурчать журчать звучать визжать верещать трещать бренчать звякать брякать квакать каркать чирикать куковать курлыкать мурлыкать кудахтать гоготать хохотать хихикать шептать лепетать бормотать лопотать мямлить бродить шагать мчаться красться семенить ковылять хромать ползать скакать вскочить присесть наклониться согнуться выпрямиться повернуться обернуться оглянуться приблизиться отойти подойти отступить ринуться броситься метнуться кружиться вращаться катиться скользить нырять погружаться выныривать плавать причалить отчалить взлетать приземляться болтать беседовать разговаривать рассуждать возражать соглашаться отрицать утверждать заявлять объявлять сообщать рассказывать пересказывать повторять перебивать восклицать восхищаться хвалить ругать бранить упрекать обвинять оправдывать извиняться благодарить приветствовать прощаться поздравлять обещать клясться угрожать предупреждать советовать предлагать уговаривать упрашивать умолять требовать приказывать командовать запрещать разрешать намекать шутить дразнить хвастаться замечать наблюдать разглядывать рассматривать различать узнавать угадывать догадываться вспоминать запоминать заучивать представлять воображать мечтать размышлять обдумывать соображать осознавать сознавать сомневаться предполагать подозревать ожидать надеяться радоваться веселиться ликовать восторгаться умиляться грустить тосковать унывать скучать огорчаться расстраиваться переживать волноваться тревожиться беспокоиться пугаться ужасаться злиться сердиться гневаться раздражаться обижаться завидовать ревновать стыдиться смущаться робеть гордиться презирать ненавидеть сочувствовать сострадать готовить стряпать тушить запекать солить мариновать квасить коптить сушить морозить размораживать чистить стирать полоскать выжимать гладить штопать латать вязать вышивать прясть ткать кроить вырезать клеить мастерить чинить ремонтировать налаживать собирать разбирать прикручивать привинчивать прибивать вбивать вкручивать сверлить точить шлифовать красить белить штукатурить мести подметать пылесосить вытирать протирать полировать убирать прибирать раскладывать складывать развешивать ковать паять сваривать клепать лудить плавить отливать формовать лепить обжигать выдувать вытачивать строгать тесать долбить буравить мостить возводить сооружать воздвигать моросить накрапывать хлестать заливать капать таять подмерзать леденеть обледенеть замерзать оттаивать испаряться оседать клубиться стелиться рассеиваться сгущаться темнеть светлеть смеркаться рассветать вечереть ставить снимать надевать одеваться раздеваться обуваться разуваться застёгивать расстёгивать завязывать развязывать запирать отпирать включать выключать зажигать гасить наливать выливать переливать насыпать высыпать набирать наполнять опустошать смешивать взбивать размешивать процеживать покупать продавать тратить копить занимать одалживать возвращать получать находить прятать показывать скрывать охранять стеречь защищать нападать побеждать проигрывать сражаться драться мириться ссориться спорить договариваться учиться изучать преподавать обучать решать вычислять считать измерять взвешивать сравнивать проверять исправлять ошибаться чертить рисовать раскрашивать сочинять придумывать изобретать создавать творить разрушать увядать распускаться созревать поспевать плодоносить колоситься зеленеть желтеть краснеть белеть синеть чернеть кормить поить пасти доить стричь приручать дрессировать охотиться выслеживать догонять убегать прятаться затаиться дремать просыпаться потягиваться умываться причёсываться бриться завтракать обедать ужинать перекусывать голодать наедаться отдыхать трудиться уставать выздоравливать подниматься опускаться взбираться карабкаться сползать съезжать перелезать перепрыгивать перешагивать обходить огибать пересекать переходить сворачивать заворачивать разворачиваться удаляться отдаляться сближаться расходиться разбегаться сбегаться толпиться тесниться расступаться выпускать ронять подбирать переставлять двигать толкать тащить волочить катить крутить вращать поворачивать сжимать разжимать стискивать мять комкать рвать разрывать склеивать скреплять связывать наматывать разматывать сматывать рыть закапывать выкапывать сажать пересаживать пропалывать поливать удобрять окучивать боронить молотить обмолачивать тлеть мерцать сиять озарять освещать слепить ослеплять затмевать меркнуть угасать вспыхивать загораться полыхать пылать дымить чадить течь литься струиться сочиться брызгать плескать разливаться растекаться затоплять орошать смачивать увлажнять промокать просыхать меняться изменяться превращаться делаться портиться улучшаться ухудшаться слабеть стареть молодеть полнеть худеть толстеть тощать поправляться пытаться стараться пробовать удаваться получаться добиваться достигать преодолевать справляться сдаваться отказываться колебаться медлить опаздывать успевать заканчивать завершать продолжать прекращать прерывать возобновлять купаться мыться вытираться обтираться ополаскиваться намыливаться грохотать рокотать громыхать тарахтеть дребезжать лязгать скрежетать щёлкать цокать тикать выть подвывать скулить фыркать`;
-        const vocabAdj = `большой маленький новый старый хороший плохой белый черный красный синий зеленый желтый добрый злой умный глупый веселый грустный быстрый медленный легкий тяжелый мягкий твердый теплый холодный горячий свежий черствый сухой мокрый чистый грязный дорогой дешевый богатый бедный сильный слабый больной здоровый правый левый живой мертвый громкий тихий длинный короткий широкий узкий толстый тонкий высокий низкий глубокий мелкий прямой кривой острый тупой гладкий шершавый частый редкий густой жидкий вкусный горький кислый сладкий соленый пресный светлый темный яркий тусклый цветной мутный прозрачный нежный грубый верный ложный честный подлый смелый трусливый гордый скромный жадный щедрый сытый голодный полный пустой целый битый нужный лишний важный главный простой сложный трудный ранний поздний юный молодой зрелый детский женский мужской русский чужой родной дикий ручной домашний лесной речной морской горный степной полевой луговой зимний летний весенний осенний утренний дневной вечерний ночной вчерашний сегодняшний завтрашний прошлый будущий вечный временный скорый долгий краткий первый второй третий последний крайний средний верхний нижний ближний дальний задний передний обратный встречный попутный тайный явный видный скрытый общий частный личный свой единый разный всякий каждый любой иной другой прочий розовый оранжевый фиолетовый голубой бирюзовый сиреневый малиновый бордовый алый багровый пурпурный коричневый бежевый кремовый серый седой смуглый русый рыжий золотистый серебристый огромный громадный гигантский крошечный миниатюрный просторный тесный объёмистый плоский выпуклый вогнутый круглый квадратный овальный продолговатый остроконечный закруглённый ровный неровный покатый отвесный пологий извилистый деревянный железный стальной медный золотой серебряный стеклянный каменный кирпичный бетонный пластиковый резиновый кожаный шёлковый шерстяной хлопковый льняной бумажный картонный ватный пуховый меховой знойный жаркий прохладный студёный ледяной морозный обжигающий раскалённый стылый пряный терпкий приторный безвкусный ароматный душистый пахучий вонючий затхлый добродушный ласковый приветливый дружелюбный отзывчивый заботливый чуткий вежливый воспитанный учтивый любезный сердечный искренний открытый замкнутый угрюмый хмурый сварливый ворчливый вспыльчивый раздражительный дерзкий наглый нахальный надменный высокомерный спесивый тщеславный завистливый злопамятный мстительный жестокий безжалостный коварный хитрый лукавый изворотливый малодушный храбрый отважный доблестный мужественный решительный настойчивый упорный упрямый своенравный капризный ленивый трудолюбивый старательный прилежный усердный аккуратный небрежный неряшливый бережливый расточительный мудрый рассудительный сообразительный смекалистый находчивый талантливый одарённый гениальный бездарный наивный простодушный легковерный радостный счастливый довольный восторженный окрылённый печальный унылый тоскливый подавленный встревоженный испуганный напуганный робкий боязливый озабоченный взволнованный спокойный безмятежный невозмутимый равнодушный безразличный красивый прекрасный пригожий привлекательный обаятельный очаровательный симпатичный уродливый безобразный неуклюжий нескладный стройный изящный грациозный неповоротливый медлительный проворный ловкий шустрый резвый бойкий вялый сонный бодрый энергичный усталый утомлённый измученный выносливый крепкий хилый тщедушный дряхлый ветхий поношенный потрёпанный полезный вредный значительный существенный пустяковый ничтожный серьёзный опасный безопасный надёжный ненадёжный прочный хрупкий ломкий гибкий упругий жёсткий эластичный блестящий сверкающий сияющий ослепительный матовый звонкий глухой оглушительный пронзительный мелодичный влажный сырой пыльный запачканный чумазый опрятный нарядный ношеный рваный дырявый старинный древний античный современный модный старомодный пузатый пухлый худощавый тощий костлявый поджарый коренастый приземистый рослый долговязый сутулый горбатый шероховатый бугристый ребристый рельефный зернистый ворсистый мохнатый лохматый косматый кудрявый волнистый колючий шипастый игольчатый скользкий липкий клейкий вязкий шумный бесшумный беззвучный гулкий звучный голосистый мерцающий пасмурный сумрачный жирный постный диетический сочный спелый незрелый гнилой тухлый прокисший сметливый толковый дельный бестолковый разумный безрассудный рассеянный собранный целеустремлённый приятный неприятный милый славный противный мерзкий гадкий отвратительный омерзительный восхитительный чудесный дивный изумительный замечательный чудовищный ужасный страшный жуткий кошмарный нелепый смешной забавный потешный курьёзный странный чудной диковинный необычный обычный заурядный обыкновенный крупный пожилой престарелый ценный бесценный драгоценный роскошный шикарный убогий нищенский второстепенный мелочный насущный животрепещущий пластичный плотный рыхлый пышный воздушный увесистый стремительный неторопливый внимательный наблюдательный любознательный дюжий могучий хлипкий лысый бородатый усатый румяный бледный загорелый веснушчатый морщинистый гневный яростный сердитый недовольный мрачный понурый поникший раздосадованный обиженный оскорблённый виноватый смущённый растерянный изумлённый удивлённый ошеломлённый потрясённый`;
+        // --- РЕЖИМЫ И ДИАПАЗОНЫ ---
+        const OPS = {
+            add: { name: 'Сложение', sym: '+' },
+            sub: { name: 'Вычитание', sym: '−' },
+            mul: { name: 'Умножение', sym: '×' },
+            div: { name: 'Деление', sym: ':' },
+            mix: { name: 'Микс', sym: '∗' }
+        };
+        const RANGES = [[1, 100], [100, 500], [500, 1000], [1000, 5000], [5000, 10000]];
+        const RANGE_NAMES = ['1 - 100', '100 - 500', '500 - 1k', '1k - 5k', '5k - 10k'];
 
-        function parseVocab(text) {
-            return [...new Set(text.split(/\s+/).map(w => w.trim().toLowerCase()).filter(w => w.length > 0))];
+        /* GEN:BEGIN */
+        // Генератор примеров. Все числа хранятся в десятых долях (×10) — без плавающей точки.
+        // Правило: «крупное» число примера лежит в выбранном диапазоне [lo, hi],
+        // все числа примера не превышают hi:
+        //   сложение  — сумма в диапазоне, слагаемые 20–80% от неё;
+        //   вычитание — уменьшаемое в диапазоне, вычитаемое 20–80% от него;
+        //   умножение — произведение в диапазоне;
+        //   деление   — делимое в диапазоне; без дробей — нацело.
+        // Режим «Дроби»: точность 0,1; сложение/вычитание — хотя бы один операнд дробный;
+        // умножение — дробь × целое; деление — целый делитель, дробный ответ.
+        const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F'); }
+        function fmtDec(x10) {
+            const i = Math.floor(x10 / 10), f = x10 % 10;
+            return fmt(i) + (f ? ',' + f : '');
+        }
+        function mk(a10, sym, b10, ans10) {
+            return { q: fmtDec(a10) + ' ' + sym + ' ' + fmtDec(b10), a10: a10, b10: b10, sym: sym, ans10: ans10, ansText: fmtDec(ans10) };
         }
 
-        const wordsNoun = parseVocab(vocabNouns);
-        const wordsVerb = parseVocab(vocabVerbs);
-        const wordsAdj = parseVocab(vocabAdj);
-        const wordsMix = [...wordsNoun, ...wordsVerb, ...wordsAdj];
-        const wordsDual = wordsNoun.filter(w => w.length <= 9);
-
-        function generateMathProblem(difficulty) {
-            let a, b, op, res;
-            const ops = ['+', '-', '*', '/'];
-            const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-            while (true) {
-                op = ops[Math.floor(Math.random() * ops.length)];
-                
-                if (difficulty === 'math_table') { 
-                    if (op === '+') { a = rand(2, 20); b = rand(2, 20); if(a+b > 30) continue; }
-                    else if (op === '-') { a = rand(5, 30); b = rand(2, a); }
-                    else if (op === '*') { a = rand(2, 9); b = rand(2, 9); }
-                    else if (op === '/') { b = rand(2, 9); res = rand(2, 9); a = b * res; }
-                } 
-                else if (difficulty === 'math100') { 
-                    if (op === '+') { a = rand(10, 80); b = rand(10, 20); }
-                    else if (op === '-') { a = rand(20, 100); b = rand(5, a); }
-                    else if (op === '*') { a = rand(3, 15); b = rand(2, 6); }
-                    else if (op === '/') { b = rand(2, 8); res = rand(5, 12); a = b * res; }
+        function genProblem(opKey, lo, hi, frac) {
+            const op = (opKey === 'mix') ? ['add', 'sub', 'mul', 'div'][rand(0, 3)] : opKey;
+            for (let t = 0; t < 400; t++) {
+                if (op === 'add') {
+                    if (frac) {
+                        const c10 = rand(Math.max(lo, 5) * 10, hi * 10);
+                        const aMin = Math.max(1, Math.round(c10 * 0.2));
+                        const aMax = Math.max(aMin, Math.round(c10 * 0.8));
+                        const a10 = rand(aMin, aMax), b10 = c10 - a10;
+                        if (b10 < 1) continue;
+                        if (a10 % 10 === 0 && b10 % 10 === 0) continue;
+                        return mk(a10, '+', b10, c10);
+                    }
+                    const c = rand(Math.max(lo, 5), hi);
+                    const aMin = Math.max(1, Math.round(c * 0.2));
+                    const aMax = Math.max(aMin, Math.round(c * 0.8));
+                    const a = rand(aMin, aMax), b = c - a;
+                    if (b < 1) continue;
+                    return mk(a * 10, '+', b * 10, c * 10);
                 }
-                else if (difficulty === 'math500') { 
-                    if (op === '+') { a = rand(50, 400); b = rand(50, 100); }
-                    else if (op === '-') { a = rand(150, 500); b = rand(50, a - 50); }
-                    else if (op === '*') { a = rand(12, 40); b = rand(3, 9); }
-                    else if (op === '/') { b = rand(4, 15); res = rand(15, 30); a = b * res; }
+                if (op === 'sub') {
+                    if (frac) {
+                        const a10 = rand(Math.max(lo, 5) * 10, hi * 10);
+                        const bMin = Math.max(1, Math.round(a10 * 0.2));
+                        const bMax = Math.max(bMin, Math.min(a10 - 1, Math.round(a10 * 0.8)));
+                        const b10 = rand(bMin, bMax);
+                        if (a10 - b10 < 1) continue;
+                        if (a10 % 10 === 0 && b10 % 10 === 0) continue;
+                        return mk(a10, '−', b10, a10 - b10);
+                    }
+                    const a = rand(Math.max(lo, 5), hi);
+                    const bMin = Math.max(1, Math.round(a * 0.2));
+                    const bMax = Math.max(bMin, Math.min(a - 1, Math.round(a * 0.8)));
+                    const b = rand(bMin, bMax);
+                    if (a - b < 1) continue;
+                    return mk(a * 10, '−', b * 10, (a - b) * 10);
                 }
-
-                if (op === '+') res = a + b;
-                if (op === '-') res = a - b;
-                if (op === '*') res = a * b;
-                if (op === '/') res = a / b;
-
-                if (difficulty === 'math_table' && res > 81) continue;
-                if (difficulty === 'math100' && res > 100) continue;
-                if (difficulty === 'math500' && (op === '/' ? (a < 100 || a > 500) : (res < 100 || res > 500))) continue;
-
-                let visualOp = op;
-                if(op === '*') visualOp = '×';
-                if(op === '/') visualOp = ':';
-
-                return {
-                    question: `${a} ${visualOp} ${b}`,
-                    answer: res.toString()
-                };
+                if (op === 'mul') {
+                    if (frac) {
+                        const f10 = rand(11, Math.max(15, Math.floor(Math.sqrt(hi)) * 10));
+                        if (f10 % 10 === 0) continue;
+                        const nMin = Math.max(2, Math.ceil(lo * 10 / f10));
+                        const nMax = Math.floor(hi * 10 / f10);
+                        if (nMax < nMin) continue;
+                        const n = rand(nMin, nMax);
+                        const p10 = f10 * n;
+                        return Math.random() < 0.5 ? mk(f10, '×', n * 10, p10) : mk(n * 10, '×', f10, p10);
+                    }
+                    const f = rand(2, Math.max(3, Math.floor(Math.sqrt(hi))));
+                    const bMin = Math.max(2, Math.ceil(lo / f));
+                    const bMax = Math.floor(hi / f);
+                    if (bMax < bMin) continue;
+                    const b = rand(bMin, bMax);
+                    return Math.random() < 0.5 ? mk(f * 10, '×', b * 10, f * b * 10) : mk(b * 10, '×', f * 10, f * b * 10);
+                }
+                // div
+                if (frac) {
+                    const d = rand(2, Math.max(3, Math.floor(Math.sqrt(hi))));
+                    const qMin = Math.max(11, Math.ceil(lo * 10 / d));
+                    const qMax = Math.floor(hi * 10 / d);
+                    if (qMax < qMin) continue;
+                    const q10 = rand(qMin, qMax);
+                    if (q10 % 10 === 0) continue;
+                    return mk(d * q10, ':', d * 10, q10);
+                }
+                const d = rand(2, Math.max(3, Math.floor(Math.sqrt(hi))));
+                const qMin = Math.max(2, Math.ceil(lo / d));
+                const qMax = Math.floor(hi / d);
+                if (qMax < qMin) continue;
+                const q = rand(qMin, qMax);
+                return mk(d * q * 10, ':', d * 10, q * 10);
             }
+            return mk(20, '+', 20, 40);
         }
+        /* GEN:END */
 
         // --- СОСТОЯНИЕ ---
-        let currentMode = 'noun'; 
-        let activeWordList = wordsNoun;
-        let isMathMode = false;
+        let currentOp = 'add';
+        let currentRange = 0;
 
-        let nLevel = 2;
-        let targetInputs = 20;
-        let memoTime = 3; 
-        let history = []; 
-        let recallIndex = 0;
+        let totalProblems = 20;
+        let gameSeconds = 0; // 0 = без лимита времени; иначе игра до первого предела (время или количество)
+        const attemptsMax = 3;
+
+        let problemIndex = 0;
         let attempts = 3;
-        let selectedCell = null;
+        let correctCount = 0;
+        let curProblem = null;
         let sessionStats = null;
         let roundStartMs = 0;
         let roundPausedMs = 0;
         let pauseStartedAt = 0;
         let isGameRunning = false;
         let isPaused = false;
-        let needsInput = false;
         let isProcessing = false;
-        let correctCount = 0;
-        
-        let gameTimer = null; 
+
+        let gameTimer = null;
         let pendingFn = null;
         let pendingRemaining = 0;
         let pendingStart = 0;
-        let cardTimerInterval = null;
         let totalSeconds = 0;
         let mainTimerInterval = null;
 
@@ -626,70 +621,33 @@
         const resultScreen = document.getElementById('result-screen');
         const wordCard = document.getElementById('word-card');
         const wordDisplay = document.getElementById('word-display');
-        const wordIndexEl = document.getElementById('word-index');
-        const cardTimerEl = document.getElementById('card-timer');
-        const inputArea = document.getElementById('input-area');
         const nativeInput = document.getElementById('native-input');
-        const waitMsg = document.getElementById('wait-msg');
         const pauseOverlay = document.getElementById('pause-overlay');
         const timerDisplay = document.getElementById('timer');
         const progressDisplay = document.getElementById('progress');
-        const submitBtn = document.getElementById('submit-btn');
-        const gridEl = document.getElementById('dual-grid');
-        const gridCells = [...gridEl.querySelectorAll('.gcell')];
-        const ballEl = document.createElement('div');
-        ballEl.id = 'ball';
+        const displayModeEl = document.getElementById('display-mode');
 
-        // --- DUAL: сетка 3×3 ---
-        function placeBall(pos) {
-            gridCells[pos].appendChild(ballEl);
-            ballEl.style.animation = 'none';
-            void ballEl.offsetWidth;
-            ballEl.style.animation = '';
-        }
-        function hideBall() {
-            if (ballEl.parentNode) ballEl.parentNode.removeChild(ballEl);
-        }
-        function clearCellStates() {
-            selectedCell = null;
-            gridCells.forEach(c => c.classList.remove('sel', 'reveal-cell'));
-            gridEl.classList.remove('shake', 'grid-error', 'grid-ok');
-        }
-        gridCells.forEach((cell, idx) => {
-            cell.addEventListener('pointerdown', (e) => {
-                e.preventDefault();
-                if (currentMode !== 'dual' || !needsInput || isPaused || isProcessing || !isGameRunning) return;
-                gridCells.forEach(c => c.classList.remove('sel'));
-                cell.classList.add('sel');
-                selectedCell = idx;
-            });
-        });
-
-
-        // --- ВЫБОР РЕЖИМА ---
-        function setMode(mode, btn) {
-            currentMode = mode;
-            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        // --- ВЫБОР РЕЖИМА И ДИАПАЗОНА ---
+        let fracMode = false;
+        function setOp(op, btn) {
+            currentOp = op;
+            document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            if (mode.startsWith('math') || mode === 'super_mix') {
-                isMathMode = true; 
-                activeWordList = []; 
-            } else {
-                isMathMode = false;
-                if (mode === 'noun') activeWordList = wordsNoun;
-                else if (mode === 'verb') activeWordList = wordsVerb;
-                else if (mode === 'adj') activeWordList = wordsAdj;
-                else if (mode === 'mix') activeWordList = wordsMix;
-                else if (mode === 'dual') activeWordList = wordsDual;
-            }
+        }
+        function setRange(idx, btn) {
+            currentRange = idx;
+            document.querySelectorAll('.range-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        function toggleFrac(btn) {
+            fracMode = !fracMode;
+            btn.classList.toggle('active', fracMode);
         }
 
         // --- ИГРА ---
         function showSetup() {
             cancelSchedule();
             clearInterval(mainTimerInterval);
-            clearInterval(cardTimerInterval);
             nativeInput.blur();
             setupScreen.classList.remove('hidden');
             gameScreen.classList.add('hidden');
@@ -701,55 +659,42 @@
 
         function startGame() {
             cancelSchedule();
-            clearInterval(cardTimerInterval);
-            nLevel = getWheelValue('n');
-            targetInputs = getWheelValue('r');
-            memoTime = getWheelValue('t');
+            totalProblems = getWheelValue('cnt');
+            gameSeconds = getWheelValue('tmin') * 60;
 
-            if (targetInputs <= nLevel) {
-                targetInputs = nLevel + 1;
-                setWheelValue('r', targetInputs);
-            }
-            if (!currentMode.startsWith('math') && currentMode !== 'super_mix' && targetInputs > activeWordList.length) {
-                targetInputs = activeWordList.length;
-            }
-
-            history = [];
-            recallIndex = 0;
+            problemIndex = 0;
             correctCount = 0;
             isGameRunning = true;
             isPaused = false;
-            
-            nativeInput.setAttribute('type', 'text');
-            nativeInput.setAttribute('inputmode', 'text');
-
-            clearCellStates();
-            hideBall();
-            wordCard.classList.remove('compact');
-            gridEl.classList.toggle('hidden', currentMode !== 'dual');
-            sessionStats = { first: 0, second: 0, third: 0, fail: 0, wrong: 0, wErr: 0, pErr: 0, msSum: 0, msCount: 0 };
+            isProcessing = false;
+            sessionStats = { first: 0, fail: 0, wrong: 0, msSum: 0, msCount: 0 };
 
             totalSeconds = 0;
-            timerDisplay.innerText = "00:00";
-            document.getElementById('display-n').innerText = nLevel;
-            updateProgress();
+            updateMainTimer();
+            displayModeEl.innerText = OPS[currentOp].name + ' · ' + RANGE_NAMES[currentRange] + (fracMode ? ' · дроби' : '');
 
             setupScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
             resultScreen.classList.add('hidden');
             pauseOverlay.classList.add('hidden');
-            
+
             clearInterval(mainTimerInterval);
             mainTimerInterval = setInterval(() => {
-                if(!isPaused && isGameRunning) {
+                if (!isPaused && isGameRunning) {
                     totalSeconds++;
-                    const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-                    const s = (totalSeconds % 60).toString().padStart(2, '0');
-                    timerDisplay.innerText = `${m}:${s}`;
+                    updateMainTimer();
+                    if (gameSeconds > 0 && totalSeconds >= gameSeconds) endGame();
                 }
             }, 1000);
 
-            nextTurn();
+            nextProblem();
+        }
+
+        function updateMainTimer() {
+            const t = gameSeconds > 0 ? Math.max(0, gameSeconds - totalSeconds) : totalSeconds;
+            const m = Math.floor(t / 60).toString().padStart(2, '0');
+            const s = (t % 60).toString().padStart(2, '0');
+            timerDisplay.innerText = `${m}:${s}`;
         }
 
         function stopGame() {
@@ -762,282 +707,160 @@
             isPaused = !isPaused;
             if (isPaused) {
                 pauseSchedule();
-                clearInterval(cardTimerInterval);
                 pauseOverlay.classList.remove('hidden');
                 nativeInput.blur();
                 pauseStartedAt = Date.now();
             } else {
                 pauseOverlay.classList.add('hidden');
                 resumeSchedule();
-                if (needsInput && roundStartMs) roundPausedMs += Date.now() - pauseStartedAt;
-                if (needsInput) {
-                    if (!isProcessing) nativeInput.focus();
-                } else {
-                    startCardCountdown();
-                }
+                if (!isProcessing && roundStartMs) roundPausedMs += Date.now() - pauseStartedAt;
+                if (!isProcessing) nativeInput.focus();
             }
         }
 
-        function startMemoTimer() {
-            schedule(() => {
-                clearInterval(cardTimerInterval);
-                nextTurn();
-            }, memoTime * 1000);
-            startCardCountdown();
-        }
-
-        function startCardCountdown() {
-            clearInterval(cardTimerInterval);
-            cardTimerEl.classList.remove('hidden');
-            const update = () => {
-                const remMs = pendingRemaining - (Date.now() - pendingStart);
-                cardTimerEl.innerText = Math.max(0, Math.ceil(remMs / 1000));
-            };
-            update();
-            cardTimerInterval = setInterval(update, 250);
-        }
-
-        function nextTurn() {
+        function nextProblem() {
             if (!isGameRunning) return;
             isProcessing = false;
 
-            if (recallIndex >= targetInputs) {
+            if (problemIndex >= totalProblems) {
                 endGame();
                 return;
             }
 
+            const [lo, hi] = RANGES[currentRange];
+            curProblem = genProblem(currentOp, lo, hi, fracMode);
+            attempts = attemptsMax;
+
             nativeInput.value = '';
             nativeInput.className = '';
-            attempts = 3;
-            if (currentMode === 'dual') clearCellStates();
-            clearInterval(cardTimerInterval);
+            wordDisplay.innerText = curProblem.q + ' = _';
+            fitProblem();
+            progressDisplay.innerText = `${problemIndex + 1}/${totalProblems}`;
 
-            let isGenerating = history.length < targetInputs;
-            let displayContent = "";
+            cancelSchedule();
 
-            if (isGenerating) {
-                let item = {};
-                let genType = 'word';
-                
-                if (currentMode.startsWith('math')) {
-                    genType = 'math';
-                } else if (currentMode === 'super_mix') {
-                    genType = Math.random() < 0.5 ? 'math' : 'word';
-                }
+            roundStartMs = Date.now();
+            roundPausedMs = 0;
+            setTimeout(() => { if (isGameRunning && !isPaused) nativeInput.focus(); }, 50);
+        }
 
-                if (genType === 'math') {
-                    let difficulty = currentMode === 'super_mix' ? 'math_table' : currentMode;
-                    item = generateMathProblem(difficulty);
-                    item.type = 'math';
-                } else {
-                    let list = (currentMode === 'super_mix') ? wordsMix : activeWordList;
-                    const w = list[Math.floor(Math.random() * list.length)];
-                    item = { question: w, answer: w, type: 'word' };
-                    if (currentMode === 'dual') item.pos = Math.floor(Math.random() * 9);
-                }
-
-                history.push(item);
-                displayContent = item.question;
-                wordDisplay.classList.remove('countdown-big');
-            } else {
-                let remaining = targetInputs - recallIndex;
-                displayContent = remaining;
-                wordDisplay.classList.add('countdown-big');
-            }
-
-            wordDisplay.innerText = displayContent;
-
-            if (currentMode === 'dual') {
-                if (isGenerating) placeBall(history[history.length - 1].pos);
-                else hideBall();
-            }
-            needsInput = history.length > nLevel;
-
-            if (needsInput) {
-                wordCard.classList.remove('hidden');
-                inputArea.classList.remove('hidden');
-                waitMsg.classList.add('hidden');
-                
-                wordIndexEl.classList.add('hidden');
-                cardTimerEl.classList.add('hidden');
-                updateProgress();
-                if (currentMode === 'dual') wordCard.classList.add('compact');
-                
-                const targetItem = history[recallIndex];
-                
-                if (targetItem.type === 'math') {
-                    nativeInput.setAttribute('type', 'tel');
-                    nativeInput.setAttribute('inputmode', 'decimal');
-                    submitBtn.style.display = 'flex';
-                } else {
-                    nativeInput.setAttribute('type', 'text');
-                    nativeInput.setAttribute('inputmode', 'text');
-                    submitBtn.style.display = 'none';
-                }
-                
-                setTimeout(() => { if (isGameRunning && !isPaused) nativeInput.focus(); }, 50);
-
-                roundStartMs = Date.now();
-                roundPausedMs = 0;
-
-            } else {
-                wordCard.classList.remove('hidden');
-                inputArea.classList.add('hidden');
-                waitMsg.classList.add('hidden'); 
-                nativeInput.blur();
-                
-                progressDisplay.innerText = `${recallIndex}/${targetInputs}`;
-                
-                wordCard.classList.remove('compact');
-                wordIndexEl.innerText = history.length;
-                wordIndexEl.classList.remove('hidden');
-                
-                startMemoTimer();
+        function fitProblem() {
+            let size = 48; // базовый размер цифр (3rem)
+            wordDisplay.style.fontSize = size + 'px';
+            const maxW = wordCard.clientWidth - 4;
+            while (size > 22 && wordDisplay.scrollWidth > maxW) {
+                size -= 2;
+                wordDisplay.style.fontSize = size + 'px';
             }
         }
 
-        function submitMath() {
+        function roundElapsed() {
+            return Date.now() - roundStartMs - roundPausedMs;
+        }
+
+        function submitAnswer() {
             handleFormSubmit({ preventDefault: () => {} });
             nativeInput.focus();
         }
 
         function handleFormSubmit(e) {
             e.preventDefault();
-            if (!needsInput || isPaused || isProcessing) return;
+            if (!isGameRunning || isPaused || isProcessing) return;
 
-            let userText = nativeInput.value.trim().toLowerCase();
-            if (!userText) return;
+            const raw = nativeInput.value.trim().replace(',', '.').replace(/[^\d.]/g, '');
+            if (!raw || raw === '.') return;
+            const val = parseFloat(raw);
+            if (!isFinite(val)) return;
 
-            if (currentMode === 'dual' && selectedCell === null) {
-                gridEl.classList.add('shake');
-                setTimeout(() => gridEl.classList.remove('shake'), 450);
-                return;
-            }
-
-            const targetItem = history[recallIndex];
-            const targetAnswer = targetItem.answer.toLowerCase();
-
-            let wordOK;
-            if (targetItem.type === 'math') {
-                userText = userText.replace(',', '.');
-                wordOK = parseFloat(userText) === parseFloat(targetAnswer);
-            } else {
-                wordOK = userText.replace(/ё/g, 'е') === targetAnswer.replace(/ё/g, 'е');
-            }
-            const posOK = (currentMode !== 'dual') || (selectedCell === targetItem.pos);
-            const isCorrect = wordOK && posOK;
+            const isCorrect = Math.round(val * 10) === curProblem.ans10;
 
             if (isCorrect) {
                 isProcessing = true;
                 nativeInput.classList.add('input-success');
-                if (currentMode === 'dual') gridEl.classList.add('grid-ok');
-                if (attempts === 3) sessionStats.first++; else if (attempts === 2) sessionStats.second++; else sessionStats.third++;
-                sessionStats.msSum += Date.now() - roundStartMs - roundPausedMs;
+                if (attempts === attemptsMax) sessionStats.first++;
+                sessionStats.msSum += roundElapsed();
                 sessionStats.msCount++;
                 finishRound(true);
             } else {
                 attempts--;
                 sessionStats.wrong++;
-                if (currentMode === 'dual') {
-                    if (!wordOK) sessionStats.wErr++;
-                    if (!posOK) sessionStats.pErr++;
-                }
-                if (!wordOK) nativeInput.classList.add('input-error');
-                if (!posOK) {
-                    gridEl.classList.add('grid-error');
-                    setTimeout(() => gridEl.classList.remove('grid-error'), 500);
-                }
+                nativeInput.classList.add('input-error');
 
                 setTimeout(() => {
                     if (!isGameRunning) return;
                     nativeInput.classList.remove('input-error');
-                    if (attempts > 0 && !wordOK) nativeInput.value = '';
+                    if (attempts > 0) nativeInput.value = '';
                 }, 500);
 
                 if (attempts <= 0) {
                     isProcessing = true;
                     sessionStats.fail++;
-                    sessionStats.msSum += Date.now() - roundStartMs - roundPausedMs;
+                    sessionStats.msSum += roundElapsed();
                     sessionStats.msCount++;
                     // ПОКАЗ ПРАВИЛЬНОГО ОТВЕТА (БЕЛЫМ)
                     schedule(() => {
-                        nativeInput.value = targetAnswer;
-                        nativeInput.classList.add('input-reveal');
-                        if (currentMode === 'dual') {
-                            gridCells.forEach(c => c.classList.remove('sel'));
-                            gridCells[targetItem.pos].classList.add('reveal-cell');
-                        }
+                        revealAnswer();
                         schedule(() => finishRound(false), 1500);
                     }, 500);
                 }
             }
         }
-        
-        function finishRound(success) {
-            recallIndex++;
-            if (success) correctCount++;
-            updateProgress();
-            if (success) {
-                schedule(nextTurn, 600);
-            } else {
-                nextTurn();
-            }
+
+        function revealAnswer() {
+            nativeInput.value = curProblem.ansText;
+            nativeInput.classList.remove('input-error');
+            nativeInput.classList.add('input-reveal');
         }
 
-        function updateProgress() {
-            let displayCount = recallIndex;
-            if (needsInput && recallIndex < targetInputs) displayCount = recallIndex + 1;
-            progressDisplay.innerText = `${displayCount}/${targetInputs}`;
+        function finishRound(success) {
+            problemIndex++;
+            if (success) correctCount++;
+            if (success) {
+                schedule(nextProblem, 600);
+            } else {
+                nextProblem();
+            }
         }
 
         function endGame() {
             isGameRunning = false;
             cancelSchedule();
             clearInterval(mainTimerInterval);
-            clearInterval(cardTimerInterval);
             nativeInput.blur();
             gameScreen.classList.add('hidden');
             resultScreen.classList.remove('hidden');
 
             const ss = sessionStats;
+            const answered = problemIndex;
             const avgMs = Math.round(ss.msSum / Math.max(1, ss.msCount));
-            const acc = targetInputs > 0 ? Math.round(ss.first / targetInputs * 100) : 0;
+            const acc = answered > 0 ? Math.round(ss.first / answered * 100) : 0;
 
-            document.getElementById('res-mode').innerText = MODE_NAMES[currentMode] || currentMode;
-            document.getElementById('res-level').innerText = nLevel + "-Back";
-            document.getElementById('final-score').innerText = correctCount + " / " + targetInputs;
+            document.getElementById('res-mode').innerText = OPS[currentOp].name + (fracMode ? ' · дроби' : '');
+            document.getElementById('res-range').innerText = RANGE_NAMES[currentRange];
+            document.getElementById('final-score').innerText = correctCount + " / " + answered;
             document.getElementById('final-accuracy').innerText = acc + "%";
             document.getElementById('res-wrong').innerText = ss.wrong;
             document.getElementById('res-fail').innerText = ss.fail;
             document.getElementById('res-avg').innerText = (avgMs / 1000).toFixed(1) + " с";
             document.getElementById('final-time').innerText = fmtDur(totalSeconds);
-            const dualRow = document.getElementById('res-dual-row');
-            if (currentMode === 'dual') {
-                dualRow.style.display = '';
-                document.getElementById('res-dual').innerText = ss.wErr + ' / ' + ss.pErr;
-            } else {
-                dualRow.style.display = 'none';
-            }
 
             recordSession({
-                d: Date.now(), mode: currentMode, n: nLevel, memo: memoTime, rounds: targetInputs,
-                first: ss.first, second: ss.second, third: ss.third, fail: ss.fail, wrong: ss.wrong,
-                wErr: ss.wErr, pErr: ss.pErr, avgMs: avgMs, dur: totalSeconds
+                d: Date.now(), op: currentOp, rg: currentRange, fr: fracMode ? 1 : 0, rounds: answered,
+                first: ss.first, fail: ss.fail, wrong: ss.wrong,
+                avgMs: avgMs, dur: totalSeconds
             });
         }
 
         // === СТАТИСТИКА ===
-        const STATS_KEY = 'nback_stats_v1';
+        const STATS_KEY = 'math_trainer_stats_v1';
         const STATS_CAP = 2000;
-        const MODE_NAMES = {
-            noun: 'Существительные', verb: 'Глаголы', adj: 'Прилагательные', mix: 'Микс',
-            math_table: 'Таблица умножения', math100: 'Математика 1–100', math500: 'Математика 100–500',
-            super_mix: 'Язык + математика', dual: 'Dual: слово + позиция'
-        };
         const MONTHS_RU = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
         const statsScreen = document.getElementById('stats-screen');
         const detailScreen = document.getElementById('detail-screen');
 
+        function sessTitle(op, rg, fr) {
+            return (OPS[op] ? OPS[op].name : op) + ' · ' + (RANGE_NAMES[rg] || rg) + (fr ? ' · дроби' : '');
+        }
         function loadStats() {
             try {
                 const o = JSON.parse(localStorage.getItem(STATS_KEY));
@@ -1050,11 +873,10 @@
         }
         function foldIntoAgg(st, sess) {
             const dt = new Date(sess.d);
-            const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '|' + sess.mode;
-            const a = st.agg[key] || (st.agg[key] = { s: 0, r: 0, first: 0, wrong: 0, msSum: 0, dur: 0, nMax: 0 });
+            const key = dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '|' + sess.op + '|' + sess.rg + '|' + (sess.fr ? 1 : 0);
+            const a = st.agg[key] || (st.agg[key] = { s: 0, r: 0, first: 0, wrong: 0, msSum: 0, dur: 0 });
             a.s++; a.r += sess.rounds; a.first += sess.first; a.wrong += sess.wrong;
             a.msSum += sess.avgMs; a.dur += sess.dur;
-            a.nMax = Math.max(a.nMax, sess.n);
         }
         function recordSession(rec) {
             const st = loadStats();
@@ -1085,21 +907,14 @@
             const x = st.sessions.find(sess => sess.d === ts);
             if (!x) return;
             document.getElementById('detail-title').innerText = fmtDate(x.d);
-            document.getElementById('det-mode').innerText = MODE_NAMES[x.mode] || x.mode;
-            document.getElementById('det-level').innerText = x.n + '-Back';
+            document.getElementById('det-mode').innerText = (OPS[x.op] ? OPS[x.op].name : x.op) + (x.fr ? ' · дроби' : '');
+            document.getElementById('det-range').innerText = RANGE_NAMES[x.rg] || x.rg;
             document.getElementById('det-score').innerText = (x.rounds - x.fail) + ' / ' + x.rounds;
             document.getElementById('det-acc').innerText = (x.rounds ? Math.round(x.first / x.rounds * 100) : 0) + '%';
             document.getElementById('det-wrong').innerText = x.wrong;
             document.getElementById('det-fail').innerText = x.fail;
             document.getElementById('det-avg').innerText = (x.avgMs / 1000).toFixed(1) + ' с';
             document.getElementById('det-time').innerText = fmtDur(x.dur);
-            const dr = document.getElementById('det-dual-row');
-            if (x.mode === 'dual') {
-                dr.style.display = '';
-                document.getElementById('det-dual').innerText = x.wErr + ' / ' + x.pErr;
-            } else {
-                dr.style.display = 'none';
-            }
             disarmDelete();
             statsScreen.classList.add('hidden');
             detailScreen.classList.remove('hidden');
@@ -1151,18 +966,19 @@
             let html = det.slice().reverse().map(x => {
                 const a = x.rounds ? Math.round(x.first / x.rounds * 100) : 0;
                 return '<div class="hrow" data-ts="' + x.d + '">' +
-                    '<div class="hmain"><b>' + (MODE_NAMES[x.mode] || x.mode) + ' · ' + x.n + '-Back</b>' +
-                    '<span>' + fmtDate(x.d) + ' · ' + x.rounds + ' ответов · ' + (x.avgMs / 1000).toFixed(1) + ' с/ответ</span></div>' +
+                    '<div class="hmain"><b>' + sessTitle(x.op, x.rg, x.fr) + '</b>' +
+                    '<span>' + fmtDate(x.d) + ' · ' + x.rounds + ' примеров · ' + (x.avgMs / 1000).toFixed(1) + ' с/пример</span></div>' +
                     '<div class="hacc">' + a + '%</div>' +
                     '<button class="hdel" data-label="✕">✕</button></div>';
             }).join('');
             html += aggEntries.map(([key, a]) => {
-                const ym = key.split('|')[0], mode = key.split('|')[1];
+                const parts = key.split('|');
+                const ym = parts[0], op = parts[1], rg = +parts[2], fr = +parts[3] || 0;
                 const yy = ym.split('-')[0], mm = ym.split('-')[1];
                 const acc2 = a.r ? Math.round(a.first / a.r * 100) : 0;
                 return '<div class="hrow agg" data-agg="' + key + '">' +
-                    '<div class="hmain"><b>' + MONTHS_RU[+mm - 1] + ' ' + yy + ' · ' + (MODE_NAMES[mode] || mode) + '</b>' +
-                    '<span>Архив · ' + a.s + ' сессий · до ' + a.nMax + '-Back · ' + (a.msSum / a.s / 1000).toFixed(1) + ' с/ответ</span></div>' +
+                    '<div class="hmain"><b>' + MONTHS_RU[+mm - 1] + ' ' + yy + ' · ' + sessTitle(op, rg, fr) + '</b>' +
+                    '<span>Архив · ' + a.s + ' сессий · ' + (a.msSum / a.s / 1000).toFixed(1) + ' с/пример</span></div>' +
                     '<div class="hacc">' + acc2 + '%</div>' +
                     '<button class="hdel" data-label="✕">✕</button></div>';
             }).join('');
@@ -1181,18 +997,17 @@
             if (row.dataset.ts) openDetail(+row.dataset.ts);
         });
 
-
         // === КОЛЁСА НАСТРОЕК (iOS-стиль) ===
         const WH_ITEM = 30, WH_H = 120, WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
         const wheels = {};
         function buildWheelPicker(picker) {
             const key = picker.dataset.key;
+            const list = picker.querySelector('.wlist');
             const min = +picker.dataset.min, max = +picker.dataset.max;
             const step = +(picker.dataset.step || 1), def = +picker.dataset.def;
-            const list = picker.querySelector('.wlist');
             const values = [];
             for (let v = min; v <= max; v += step) values.push(v);
-            values.forEach(v => { const d = document.createElement('div'); d.className = 'witem'; d.textContent = v; list.appendChild(d); });
+            values.forEach(v => { const d = document.createElement('div'); d.className = 'witem'; d.textContent = v === 0 ? '∞' : v; list.appendChild(d); });
             const items = [...list.querySelectorAll('.witem')];
             function render() {
                 const sc = list.scrollTop + WH_CENTER;
