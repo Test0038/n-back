@@ -193,7 +193,7 @@
         .input-wrapper { flex: 0 0 auto; width: 100%; max-width: 410px; margin: 0 auto; padding-bottom: 0; }
         #app-viewport.kb-open { padding-bottom: 0; }
         #game-form { width: 100%; display: flex; gap: 8px; }
-        #native-input {
+        #native-input, #phrase-input {
             flex: 1; padding: 15px; font-size: 1.5rem; color: #fff; text-align: center;
             border-radius: 16px; border: 1px solid #2a2b32; outline: none; -webkit-appearance: none;
             font-family: 'Nunito', sans-serif; font-weight: 800;
@@ -201,7 +201,7 @@
             box-shadow: inset 0 3px 9px rgba(0,0,0,.75), inset 0 -1px 0 rgba(255,255,255,.04);
             transition: border-color .15s, box-shadow .15s;
         }
-        #native-input:focus {
+        #native-input:focus, #phrase-input:focus {
             border-color: var(--accent-bright);
             box-shadow: inset 0 3px 9px rgba(0,0,0,.7), 0 0 0 1px rgba(61,139,255,.4), 0 6px 18px -6px rgba(61,139,255,.5);
         }
@@ -343,6 +343,7 @@
 
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
     </style>
+    <link rel="stylesheet" href="language-v1.css">
 </head>
 <body>
 
@@ -355,13 +356,20 @@
 
                 <div class="settings-block">
                     <div class="block-title">ЯЗЫК</div>
-                    <div class="mode-grid">
-                        <button class="mode-btn active" onclick="setMode('noun', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Существительные</button>
-                        <button class="mode-btn" onclick="setMode('verb', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Глаголы</button>
-                        <button class="mode-btn" onclick="setMode('adj', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z"/></svg>Прилагательные</button>
-                        <button class="mode-btn" onclick="setMode('mix', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>Микс</button>
-                        <button class="mode-btn super-btn" onclick="setMode('dual', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>DUAL: СЛОВО + ПОЗИЦИЯ</button>
+                    <div class="mode-grid language-parts">
+                        <button class="mode-btn active" data-pos="noun" onclick="selectPart('noun')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Существительные</button>
+                        <button class="mode-btn" data-pos="verb" onclick="selectPart('verb')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Глаголы</button>
+                        <button class="mode-btn" data-pos="adj" onclick="selectPart('adj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z"/></svg>Прилагательные</button>
+                        <button class="mode-btn" data-pos="adv" onclick="selectPart('adv')">Наречия</button>
+                        <button class="mode-btn" data-pos="pron" onclick="selectPart('pron')">Местоимения</button>
+                        <button class="mode-btn" data-pos="num" onclick="selectPart('num')">Числительные</button>
                     </div>
+                    <div class="language-options">
+                        <button class="mode-btn" id="mix-btn" onclick="selectMix()">Микс</button>
+                        <button class="mode-btn" id="reverse-btn" onclick="selectLanguageKind('reverse')">Обратное слово</button>
+                        <div class="phrase-option"><button class="mode-btn" id="phrase-btn" onclick="selectLanguageKind('phrase')">Фраза</button><div class="picker phrase-picker" data-key="p" data-min="1" data-max="10" data-def="3" data-height="60" aria-label="Слов во фразе"><div class="sel"></div><div class="wlist"></div></div></div>
+                    </div>
+                    <div class="mode-grid"><button class="mode-btn super-btn" onclick="setMode('dual', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>DUAL: СЛОВО + ПОЗИЦИЯ</button></div>
                 </div>
 
                 <div class="settings-block">
@@ -391,7 +399,7 @@
                     </div>
                 </div>
 
-                <button class="main-btn" onclick="startGame()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg> НАЧАТЬ</button>
+                <button class="main-btn" id="start-btn" onclick="prepareGame()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg> НАЧАТЬ</button>
             </div>
         </div>
 
@@ -423,6 +431,7 @@
                 <div id="input-area" class="hidden">
                     <form id="game-form" autocomplete="off" onsubmit="handleFormSubmit(event)">
                         <input type="text" id="native-input" placeholder="" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go">
+                        <textarea id="phrase-input" class="hidden" rows="1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Ответ"></textarea>
                         <button type="button" id="submit-btn" onclick="submitMath()">➔</button>
                     </form>
                 </div>
@@ -522,11 +531,11 @@
             return [...new Set(text.split(/\s+/).map(w => w.trim().toLowerCase()).filter(w => w.length > 0))];
         }
 
-        const wordsNoun = parseVocab(vocabNouns);
-        const wordsVerb = parseVocab(vocabVerbs);
-        const wordsAdj = parseVocab(vocabAdj);
-        const wordsMix = [...wordsNoun, ...wordsVerb, ...wordsAdj];
-        const wordsDual = wordsNoun.filter(w => w.length <= 9);
+        let wordsNoun = parseVocab(vocabNouns);
+        let wordsVerb = parseVocab(vocabVerbs);
+        let wordsAdj = parseVocab(vocabAdj);
+        let wordsMix = [...wordsNoun, ...wordsVerb, ...wordsAdj];
+        let wordsDual = wordsNoun.filter(w => w.length <= 9);
 
         // «Мешок» операций: по 2 каждой, перемешаны Фишером–Йетсом — операции
         // выпадают равномерно на любом отрезке игры (тот же принцип, что в Matematum)
@@ -639,6 +648,38 @@
         function cancelSchedule() {
             clearTimeout(gameTimer);
             pendingFn = null;
+            cancelFeedbackTimers();
+        }
+
+        // Feedback has its own timers: it must not replace the memo/answer transition.
+        const feedbackTimers = new Set();
+        function scheduleFeedback(fn, delay) {
+            const task = { timer: null, remaining: delay, started: 0, resume: null };
+            task.resume = () => {
+                task.started = Date.now();
+                task.timer = setTimeout(() => {
+                    feedbackTimers.delete(task);
+                    task.timer = null;
+                    fn();
+                }, task.remaining);
+            };
+            feedbackTimers.add(task);
+            task.resume();
+        }
+        function pauseFeedbackTimers() {
+            for (const task of feedbackTimers) {
+                if (task.timer === null) continue;
+                task.remaining = Math.max(0, task.remaining - (Date.now() - task.started));
+                clearTimeout(task.timer);
+                task.timer = null;
+            }
+        }
+        function resumeFeedbackTimers() {
+            for (const task of feedbackTimers) if (task.timer === null) task.resume();
+        }
+        function cancelFeedbackTimers() {
+            for (const task of feedbackTimers) clearTimeout(task.timer);
+            feedbackTimers.clear();
         }
 
         // DOM
@@ -650,7 +691,7 @@
         const wordIndexEl = document.getElementById('word-index');
         const cardTimerEl = document.getElementById('card-timer');
         const inputArea = document.getElementById('input-area');
-        const nativeInput = document.getElementById('native-input');
+        let nativeInput = document.getElementById('native-input');
         const waitMsg = document.getElementById('wait-msg');
         const pauseOverlay = document.getElementById('pause-overlay');
         const timerDisplay = document.getElementById('timer');
@@ -689,6 +730,7 @@
 
         // --- ВЫБОР РЕЖИМА ---
         function setMode(mode, btn) {
+            leaveLanguageMode();
             currentMode = mode;
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
@@ -784,6 +826,7 @@
             isPaused = !isPaused;
             if (isPaused) {
                 pauseSchedule();
+                pauseFeedbackTimers();
                 clearInterval(cardTimerInterval);
                 pauseOverlay.classList.remove('hidden');
                 nativeInput.blur();
@@ -791,6 +834,7 @@
             } else {
                 pauseOverlay.classList.add('hidden');
                 resumeSchedule();
+                resumeFeedbackTimers();
                 if (needsInput && roundStartMs) roundPausedMs += Date.now() - pauseStartedAt;
                 if (needsInput) {
                     if (!isProcessing) nativeInput.focus();
@@ -821,6 +865,7 @@
 
         function nextTurn() {
             if (!isGameRunning) return;
+            cancelFeedbackTimers();
             isProcessing = false;
 
             if (recallIndex >= targetInputs) {
@@ -830,6 +875,7 @@
 
             nativeInput.value = '';
             nativeInput.className = '';
+            if (isPhraseMode()) resizePhraseInput();
             attempts = 3;
             if (currentMode === 'dual') clearCellStates();
             clearInterval(cardTimerInterval);
@@ -853,8 +899,8 @@
                     item.type = 'math';
                 } else {
                     let list = (currentMode === 'super_mix') ? wordsMix : activeWordList;
-                    const w = list[Math.floor(Math.random() * list.length)];
-                    item = { question: w, answer: w, type: 'word' };
+                    const w = isPhraseMode() ? phraseDeck.shift() : list[Math.floor(Math.random() * list.length)];
+                    item = { question: w, answer: isReverseMode() ? Array.from(w).reverse().join('') : w, type: isPhraseMode() ? 'phrase' : 'word' };
                     if (currentMode === 'dual') item.pos = Math.floor(Math.random() * 9);
                 }
 
@@ -868,6 +914,7 @@
             }
 
             wordDisplay.innerText = displayContent;
+            if (isPhraseMode()) requestAnimationFrame(fitPhrase);
 
             if (currentMode === 'dual') {
                 if (isGenerating) placeBall(history[history.length - 1].pos);
@@ -894,7 +941,7 @@
                 } else {
                     nativeInput.setAttribute('type', 'text');
                     nativeInput.setAttribute('inputmode', 'text');
-                    submitBtn.style.display = 'none';
+                    submitBtn.style.display = targetItem.type === 'phrase' ? 'flex' : 'none';
                 }
                 
                 setTimeout(() => { if (isGameRunning && !isPaused) nativeInput.focus(); }, 50);
@@ -942,7 +989,10 @@
             let wordOK;
             if (targetItem.type === 'math') {
                 userText = userText.replace(',', '.');
-                wordOK = parseFloat(userText) === parseFloat(targetAnswer);
+                wordOK = /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/.test(userText)
+                    && Number(userText) === Number(targetAnswer);
+            } else if (targetItem.type === 'phrase') {
+                wordOK = normalizePhrase(userText) === normalizePhrase(targetAnswer);
             } else {
                 wordOK = userText.replace(/ё/g, 'е') === targetAnswer.replace(/ё/g, 'е');
             }
@@ -967,13 +1017,16 @@
                 if (!wordOK) nativeInput.classList.add('input-error');
                 if (!posOK) {
                     gridEl.classList.add('grid-error');
-                    setTimeout(() => gridEl.classList.remove('grid-error'), 500);
+                    scheduleFeedback(() => gridEl.classList.remove('grid-error'), 500);
                 }
 
-                setTimeout(() => {
+                scheduleFeedback(() => {
                     if (!isGameRunning) return;
                     nativeInput.classList.remove('input-error');
-                    if (attempts > 0 && !wordOK) nativeInput.value = '';
+                    if (attempts > 0 && !wordOK && !isProcessing) {
+                        nativeInput.value = '';
+                        if (isPhraseMode()) resizePhraseInput();
+                    }
                 }, 500);
 
                 if (attempts <= 0) {
@@ -984,6 +1037,7 @@
                     // ПОКАЗ ПРАВИЛЬНОГО ОТВЕТА (БЕЛЫМ)
                     schedule(() => {
                         nativeInput.value = targetAnswer;
+                        if (isPhraseMode()) resizePhraseInput();
                         nativeInput.classList.add('input-reveal');
                         if (currentMode === 'dual') {
                             gridCells.forEach(c => c.classList.remove('sel'));
@@ -1025,7 +1079,7 @@
             const avgMs = Math.round(ss.msSum / Math.max(1, ss.msCount));
             const acc = targetInputs > 0 ? Math.round(ss.first / targetInputs * 100) : 0;
 
-            document.getElementById('res-mode').innerText = MODE_NAMES[currentMode] || currentMode;
+            document.getElementById('res-mode').innerText = modeName(currentMode);
             document.getElementById('res-level').innerText = nLevel + "-Back";
             document.getElementById('final-score').innerText = correctCount + " / " + targetInputs;
             document.getElementById('final-accuracy').innerText = acc + "%";
@@ -1107,7 +1161,7 @@
             const x = st.sessions.find(sess => sess.d === ts);
             if (!x) return;
             document.getElementById('detail-title').innerText = fmtDate(x.d);
-            document.getElementById('det-mode').innerText = MODE_NAMES[x.mode] || x.mode;
+            document.getElementById('det-mode').innerText = modeName(x.mode);
             document.getElementById('det-level').innerText = x.n + '-Back';
             document.getElementById('det-score').innerText = (x.rounds - x.fail) + ' / ' + x.rounds;
             document.getElementById('det-acc').innerText = (x.rounds ? Math.round(x.first / x.rounds * 100) : 0) + '%';
@@ -1173,7 +1227,7 @@
             let html = det.slice().reverse().map(x => {
                 const a = x.rounds ? Math.round(x.first / x.rounds * 100) : 0;
                 return '<div class="hrow" data-ts="' + x.d + '">' +
-                    '<div class="hmain"><b>' + (MODE_NAMES[x.mode] || x.mode) + ' · ' + x.n + '-Back</b>' +
+                    '<div class="hmain"><b>' + (modeName(x.mode)) + ' · ' + x.n + '-Back</b>' +
                     '<span>' + fmtDate(x.d) + ' · ' + x.rounds + ' ответов · ' + (x.avgMs / 1000).toFixed(1) + ' с/ответ</span></div>' +
                     '<div class="hacc">' + a + '%</div>' +
                     '<button class="hdel" data-label="✕">✕</button></div>';
@@ -1183,7 +1237,7 @@
                 const yy = ym.split('-')[0], mm = ym.split('-')[1];
                 const acc2 = a.r ? Math.round(a.first / a.r * 100) : 0;
                 return '<div class="hrow agg" data-agg="' + key + '">' +
-                    '<div class="hmain"><b>' + MONTHS_RU[+mm - 1] + ' ' + yy + ' · ' + (MODE_NAMES[mode] || mode) + '</b>' +
+                    '<div class="hmain"><b>' + MONTHS_RU[+mm - 1] + ' ' + yy + ' · ' + (modeName(mode)) + '</b>' +
                     '<span>Архив · ' + a.s + ' сессий · до ' + a.nMax + '-Back · ' + (a.msSum / a.s / 1000).toFixed(1) + ' с/ответ</span></div>' +
                     '<div class="hacc">' + acc2 + '%</div>' +
                     '<button class="hdel" data-label="✕">✕</button></div>';
@@ -1208,6 +1262,7 @@
         const WH_ITEM = 30, WH_H = 120, WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
         const wheels = {};
         function buildWheelPicker(picker) {
+            const WH_H = +(picker.dataset.height || 120), WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
             const key = picker.dataset.key;
             const min = +picker.dataset.min, max = +picker.dataset.max;
             const step = +(picker.dataset.step || 1), def = +picker.dataset.def;
@@ -1260,5 +1315,6 @@
             });
         }
     </script>
+    <script src="language-v2.js"></script>
 </body>
 </html>
