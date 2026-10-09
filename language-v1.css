@@ -5,10 +5,10 @@
 #setup-screen .block-title { margin-bottom: 8px; }
 #setup-screen .mode-btn { min-width: 0; padding: 11px 4px; }
 #setup-screen .language-parts .mode-btn { gap: 4px; }
-.language-options { display: grid; grid-template-columns: .65fr 1.55fr 1.4fr; gap: 7px; margin: 8px 0; align-items: stretch; }
+.language-options { display: grid; grid-template-columns: .55fr 1.35fr 1.7fr; gap: 7px; margin: 8px 0; align-items: stretch; }
 .phrase-option { display: flex; min-width: 0; gap: 4px; }
 .phrase-option > button { flex: 1; }
-.picker.phrase-picker { width: 35px; height: 60px; flex: 0 0 35px; border-radius: 12px; }
+.picker.phrase-picker { width: 72px; height: 60px; flex: 0 0 72px; border-radius: 12px; }
 .phrase-picker .sel { top: 15px; left: 3px; right: 3px; }
 .phrase-picker .wlist { padding: 15px 0; }
 .phrase-picker .witem { font-size: 1rem; }
@@ -17,12 +17,15 @@
 #start-btn:disabled { opacity: .65; }
 #phrase-input { resize: none; min-width: 0; width: 0; min-height: 60px; max-height: 150px; line-height: 1.25; font-size: 22px; overflow-y: auto; }
 #game-screen.phrase-game #word-card { padding: 40px 0 36px; height: auto; max-height: none; flex-shrink: 0; }
-#game-screen.phrase-game #word-display:not(.countdown-big) { line-height: 1.15; hyphens: none; overflow-wrap: anywhere; }
+#game-screen.phrase-game #word-display:not(.countdown-big) { font-size: 22px; font-weight: 700; text-transform: none; letter-spacing: normal; line-height: 1.35; word-break: normal; overflow-wrap: normal; -webkit-hyphens: auto; hyphens: auto; text-wrap: balance; }
+#game-screen.phrase-game #phrase-input { font-weight: 700; }
+.witem { will-change: auto; transform-style: preserve-3d; }
+.witem > span { display: block; transform-origin: center center; backface-visibility: hidden; }
 #game-screen.phrase-game #submit-btn { width: 48px; }
 @media (max-height: 790px) {
- #setup-screen h1 { font-size: 2.15rem; margin-bottom: 6px; }
+ #setup-screen h1 { font-size: 2.15rem; margin-bottom: 6px; line-height: 1.1; }
  #setup-screen .settings-block { padding: 8px 10px; margin-bottom: 8px; }
- #setup-screen .mode-btn { padding: 9px 4px; }
+ #setup-screen .mode-btn { padding: 9px 4px; line-height: 1.2; }
  #setup-screen .block-title { margin-bottom: 6px; }
  #setup-screen .main-btn { padding: 12px; margin-top: 8px; }
 }
@@ -30,15 +33,17 @@
  #setup-screen .language-parts svg { display: none; }
  #setup-screen .mode-btn { font-size: .75rem; }
  #setup-screen .settings-block { padding-left: 7px; padding-right: 7px; }
- .language-options { gap: 4px; grid-template-columns: .6fr 1.55fr 1.4fr; }
+ .language-options { gap: 4px; grid-template-columns: .55fr 1.35fr 1.7fr; }
+ .picker.phrase-picker { width: 60px; flex-basis: 60px; }
+ #setup-screen #reverse-btn { white-space: normal; line-height: 1.2; }
 }
 @media (max-height: 700px) {
- #setup-screen .settings-block { margin-bottom: 6px; }
- #setup-screen .main-btn { padding: 8px; margin-top: 4px; }
+ #setup-screen .settings-block { margin-bottom: 4px; }
+ #setup-screen .main-btn { padding: 6px; margin-top: 2px; }
 }
 @media (max-height: 640px) {
  #setup-screen h1 { font-size: 1.9rem; margin-bottom: 4px; }
- #setup-screen .settings-block { padding-top: 5px; padding-bottom: 5px; margin-bottom: 5px; }
- #setup-screen .mode-btn { padding-top: 4px; padding-bottom: 4px; }
+ #setup-screen .settings-block { padding-top: 5px; padding-bottom: 5px; margin-bottom: 3px; }
+ #setup-screen .mode-btn { padding-top: 4px; padding-bottom: 4px; line-height: 1.15; }
  #setup-screen .block-title { font-size: .8rem; margin-bottom: 3px; }
 }

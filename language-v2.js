@@ -42,7 +42,12 @@ function selectPart(key) {
     else selectedParts.add(key);
     refreshLanguageSelection();
 }
-function selectMix() { if (!languageEnabled) languageKind='word'; selectedParts = new Set(PART_KEYS); refreshLanguageSelection(); }
+function selectMix() {
+    const reset = languageEnabled && selectedParts.size === PART_KEYS.length;
+    if (!languageEnabled || (reset && languageKind === 'phrase')) languageKind = 'word';
+    selectedParts = new Set(reset ? ['noun'] : PART_KEYS);
+    refreshLanguageSelection();
+}
 function selectLanguageKind(kind) {
     languageKind = languageEnabled && languageKind === kind ? 'word' : kind;
     if (languageKind === 'phrase') selectedParts = new Set(PART_KEYS);
@@ -72,7 +77,7 @@ function randomSeed() { const a = new Uint32Array(1); crypto.getRandomValues(a);
 async function preparePhrases(length,count) {
     if (!manifestData) manifestData = await readData('phrases-v2.json');
     const info = manifestData.lengths[length];
-    const key = 'nback_phrase_cursor_v2_audit1_' + length;
+    const key = 'nback_phrase_cursor_v2_' + manifestData.revision + '_' + length;
     let state;
     try {state=JSON.parse(localStorage.getItem(key));} catch (_) {}
     if (!state || !Number.isInteger(state.cursor) || state.cursor<0 || state.cursor>=info.count || !Number.isInteger(state.seed) || state.seed<0 || state.seed>0xffffffff) state={cursor:0,seed:randomSeed()};
@@ -91,6 +96,15 @@ async function preparePhrases(length,count) {
         deck.push(chunkData[(remaining*step+state.seed%size)%size]);
         state.cursor++;
         if (state.cursor===info.count) {state={cursor:0,seed:randomSeed()};lastChunk=-1;}
+    }
+    // Reorder only this prepared deck: no skipped sentences or lost cursor entries.
+    const opening = s => normalizePhrase(s).split(' ').slice(0,2).join(' ');
+    for (let i=1;i<deck.length;i++) {
+        const recent = deck.slice(Math.max(0,i-2),i).map(opening);
+        if (recent.includes(opening(deck[i]))) {
+            const next = deck.findIndex((s,j)=>j>i&&!recent.includes(opening(s)));
+            if (next>=0) [deck[i],deck[next]]=[deck[next],deck[i]];
+        }
     }
     return {deck,commit(){try {localStorage.setItem(key,JSON.stringify(state));}catch(_){}}};
 }
@@ -140,13 +154,9 @@ function resizePhraseInput() {
 }
 function fitPhrase() {
     if (!isPhraseMode() || wordDisplay.classList.contains('countdown-big')) return;
-    const count=String(wordDisplay.textContent).trim().split(/\s+/).length;
-    let size=Math.max(22,Math.min(40,40-(count-1)*2));
-    wordDisplay.style.fontSize=size+'px';
-    const area=gameScreen.querySelector('.game-area').clientHeight;
+    wordDisplay.style.fontSize='22px';
     const padding=needsInput?34:78;
     wordCard.style.padding=needsInput?'16px 0':'40px 0 36px';
-    while (size>22 && wordDisplay.scrollHeight+padding>Math.max(165,area-22)) wordDisplay.style.fontSize=(--size)+'px';
     wordCard.style.minHeight=Math.max(165,wordDisplay.scrollHeight+padding)+'px';
 }
 phraseInput.addEventListener('input',resizePhraseInput);

@@ -1262,43 +1262,85 @@
         const WH_ITEM = 30, WH_H = 120, WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
         const wheels = {};
         function buildWheelPicker(picker) {
-            const WH_H = +(picker.dataset.height || 120), WH_PAD = (WH_H - WH_ITEM) / 2, WH_CENTER = WH_H / 2;
             const key = picker.dataset.key;
             const min = +picker.dataset.min, max = +picker.dataset.max;
             const step = +(picker.dataset.step || 1), def = +picker.dataset.def;
             const list = picker.querySelector('.wlist');
             const values = [];
             for (let v = min; v <= max; v += step) values.push(v);
-            values.forEach(v => { const d = document.createElement('div'); d.className = 'witem'; d.textContent = v; list.appendChild(d); });
+            values.forEach(v => { const d = document.createElement('div'); d.className = 'witem'; const text = document.createElement('span'); text.textContent = v; d.appendChild(text); list.appendChild(d); });
             const items = [...list.querySelectorAll('.witem')];
+            // Snap the untransformed rows; rotate only the numbers inside them.
+            const WH_CENTER = list.clientHeight / 2, WH_PAD = WH_CENTER - WH_ITEM / 2;
+            list.style.padding = `${WH_PAD}px 0`;
+            picker.querySelector('.sel').style.top = `${WH_PAD}px`;
+            let raf = null, settleTimer = null, touching = false;
+            let startY = 0, moved = false;
+            picker.tabIndex = 0;
+            picker.setAttribute('role', 'spinbutton');
+            picker.setAttribute('aria-valuemin', min);
+            picker.setAttribute('aria-valuemax', max);
+            if (!picker.hasAttribute('aria-label')) picker.setAttribute('aria-label', picker.parentElement.querySelector('label').textContent);
+            function idx() { return Math.max(0, Math.min(values.length - 1, Math.round(list.scrollTop / WH_ITEM))); }
             function render() {
                 const sc = list.scrollTop + WH_CENTER;
                 items.forEach((it, i) => {
+                    const text = it.firstElementChild;
                     const c = i * WH_ITEM + WH_ITEM / 2 + WH_PAD;
                     const dist = c - sc;
+                    if (Math.abs(dist) > 100) { if (text.style.opacity !== '0') text.style.opacity = '0'; return; }
                     const ang = Math.max(-70, Math.min(70, (dist / WH_ITEM) * 24));
-                    it.style.transform = `rotateX(${-ang}deg) translateZ(${-Math.abs(dist) * 0.25}px) scale(${Math.max(0.78, 1 - Math.abs(dist) / 320)})`;
-                    it.style.opacity = Math.max(0.12, 1 - Math.abs(dist) / 80);
-                    it.style.color = Math.abs(dist) < WH_ITEM / 2 ? '#ffffff' : '#9fa0a8';
+                    text.style.transform = `rotateX(${-ang}deg) translateZ(${-Math.abs(dist) * 0.25}px) scale(${Math.max(0.78, 1 - Math.abs(dist) / 320)})`;
+                    text.style.opacity = Math.max(0.12, 1 - Math.abs(dist) / 80);
+                    text.style.color = Math.abs(dist) < WH_ITEM / 2 ? '#ffffff' : '#9fa0a8';
                 });
+                const value = String(values[idx()]);
+                picker.dataset.current = value;
+                picker.setAttribute('aria-valuenow', value);
             }
-            function idx() { return Math.max(0, Math.min(values.length - 1, Math.round(list.scrollTop / WH_ITEM))); }
-            let raf = null;
-            list.addEventListener('scroll', () => { if (raf) return; raf = requestAnimationFrame(() => { render(); picker.dataset.current = values[idx()]; raf = null; }); });
+            function snap() {
+                clearTimeout(settleTimer);
+                if (touching) return;
+                list.scrollTop = idx() * WH_ITEM;
+                render();
+            }
+            function queueSnap() { clearTimeout(settleTimer); settleTimer = setTimeout(snap, 150); }
+            list.addEventListener('scroll', () => {
+                if (!raf) raf = requestAnimationFrame(() => { raf = null; render(); });
+                if (!touching) queueSnap();
+            }, {passive:true});
+            list.addEventListener('scrollend', snap);
+            list.addEventListener('touchstart', e => { touching = true; moved = false; startY = e.touches[0].clientY; clearTimeout(settleTimer); }, {passive:true});
+            list.addEventListener('touchmove', e => { if (Math.abs(e.touches[0].clientY - startY) > 5) moved = true; }, {passive:true});
+            function release() { touching = false; queueSnap(); }
+            list.addEventListener('touchend', release, {passive:true});
+            list.addEventListener('touchcancel', release, {passive:true});
+            list.addEventListener('wheel', queueSnap, {passive:true});
+            list.addEventListener('click', e => {
+                const item = e.target.closest('.witem');
+                if (!item || moved) return;
+                list.scrollTop = items.indexOf(item) * WH_ITEM; snap();
+            });
+            picker.addEventListener('keydown', e => {
+                let i = idx();
+                if (e.key === 'ArrowUp') i--; else if (e.key === 'ArrowDown') i++;
+                else if (e.key === 'Home') i = 0; else if (e.key === 'End') i = values.length - 1; else return;
+                e.preventDefault(); list.scrollTop = Math.max(0, Math.min(values.length - 1, i)) * WH_ITEM; snap();
+            });
             const startIdx = Math.max(0, values.indexOf(def));
             list.scrollTop = startIdx * WH_ITEM;
             picker.dataset.current = values[startIdx];
             render();
-            wheels[key] = { picker, list, values, render };
+            wheels[key] = { picker, list, values, render, snap, value: () => values[idx()] };
         }
-        function getWheelValue(key) { return +wheels[key].picker.dataset.current; }
+        function getWheelValue(key) { return wheels[key].value(); }
         function setWheelValue(key, v) {
             const w = wheels[key]; if (!w) return;
             let i = w.values.indexOf(v);
             if (i < 0) { i = 0; let best = Infinity; w.values.forEach((val, j) => { const d = Math.abs(val - v); if (d < best) { best = d; i = j; } }); }
             w.list.scrollTop = i * WH_ITEM;
             w.picker.dataset.current = w.values[i];
-            w.render();
+            w.snap();
         }
         document.querySelectorAll('.picker').forEach(buildWheelPicker);
 

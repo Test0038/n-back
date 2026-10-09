@@ -15,11 +15,7 @@ vocabulary preserved; additional contemporary vocabulary added. This is an
 automatically filtered dictionary, not a claim of individual editorial review
 of every word. It includes common and less frequent vocabulary.
 
-`phrases-v2-*.json`: original combinatorial bank created for this application,
-CC BY-SA 4.0. One-word entries derive from the above vocabulary. Templates,
-agreement rules and reproducible generation are in `tools/build_phrases.py`.
-Word counts use whitespace-separated words; hyphenated words count as one.
-
-Version 2: folded е/ё duplicates and six spelling variants removed;
-61 human scene groups and 10 nonhuman event groups, with context-specific
-constraints. 300,000 multiword combinations selected reproducibly.
+Multiword phrase chunks now contain sentences from Tatoeba under CC BY 2.0 FR.
+See phrase-ATTRIBUTION.md and phrase-sources.tsv for contributor names and sentence IDs.
+One-word entries retain the vocabulary license above.
+Hyphenated words count as one whitespace-delimited word.
