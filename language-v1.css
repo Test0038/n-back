@@ -10,6 +10,7 @@
 .phrase-option > button { flex: 1; }
 .picker.phrase-picker { width: 72px; height: 60px; flex: 0 0 72px; border-radius: 12px; }
 .phrase-picker .sel { top: 15px; left: 3px; right: 3px; }
+#phrase-btn:not(.active) + .phrase-picker .sel { border-color: rgba(130,131,140,.2); background: transparent; box-shadow: none; }
 .phrase-picker .wlist { padding: 15px 0; }
 .phrase-picker .witem { font-size: 1rem; }
 #setup-screen .main-btn { margin-top: 12px; }

@@ -1,7 +1,7 @@
 // N-Back — Service Worker
 // Стратегия: приложение отдаётся из кэша мгновенно, свежая версия подтягивается
 // в фоне и применяется со следующего запуска. Шрифты кэшируются при первом обращении.
-const CACHE = 'nback-language-v2-corpus1';
+const CACHE = 'nback-language-v2-phrasehighlight1';
 const PRECACHE = ['./', './index.html', './manifest.json', './language-v2.js', './language-v1.css', './data/words-v2.json', './data/phrases-v2.json'];
 
 self.addEventListener('install', e => {
