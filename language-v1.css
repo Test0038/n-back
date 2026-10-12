@@ -1,10 +1,11 @@
 /* Menu additions only; original game styling remains in index.html. */
-#setup-screen { overflow: hidden; padding: 6px 0; }
+#setup-screen { overflow-y: auto; padding: 6px 0 12px; }
 #setup-screen h1 { margin: 2px 0 10px; }
 #setup-screen .settings-block { padding: 10px 12px; margin-bottom: 10px; }
 #setup-screen .block-title { margin-bottom: 8px; }
 #setup-screen .mode-btn { min-width: 0; padding: 11px 4px; }
-#setup-screen .language-parts .mode-btn { gap: 4px; }
+#setup-screen .language-parts .mode-btn { gap: 4px; font-size: clamp(.68rem, 3.1vw, .8rem); }
+#setup-screen #reverse-btn { white-space: normal; line-height: 1.2; }
 .language-options { display: grid; grid-template-columns: .55fr 1.35fr 1.7fr; gap: 7px; margin: 8px 0; align-items: stretch; }
 .phrase-option { display: flex; min-width: 0; gap: 4px; }
 .phrase-option > button { flex: 1; }
@@ -13,6 +14,16 @@
 #phrase-btn:not(.active) + .phrase-picker .sel { border-color: rgba(130,131,140,.2); background: transparent; box-shadow: none; }
 .phrase-picker .wlist { padding: 15px 0; }
 .phrase-picker .witem { font-size: 1rem; }
+.mode-btn:disabled { opacity: .45; cursor: default; }
+.mode-btn:disabled:active { transform: none; }
+.reverse-options { display: grid; grid-template-columns: 1fr 1fr auto; gap: 7px; align-items: stretch; }
+.reverse-length-option { display: flex; align-items: center; gap: 5px; color: var(--text-muted); font-size: .72rem; }
+.picker.reverse-picker { width: 58px; height: 60px; flex: 0 0 58px; border-radius: 12px; }
+.reverse-picker .sel { top: 15px; left: 3px; right: 3px; }
+.reverse-picker .witem { font-size: 1rem; }
+.reverse-length-option.inactive { opacity: .45; }
+#reverse-pool-status { margin: 5px 0 8px; min-height: 16px; color: var(--text-muted); font-size: .72rem; line-height: 1.35; text-align: center; }
+#reverse-pool-status.insufficient { color: #ff9b83; }
 #setup-screen .main-btn { margin-top: 12px; }
 #setup-screen.loading .mode-btn { pointer-events: none; }
 #start-btn:disabled { opacity: .65; }
@@ -23,6 +34,12 @@
 .witem { will-change: auto; transform-style: preserve-3d; }
 .witem > span { display: block; transform-origin: center center; backface-visibility: hidden; }
 #game-screen.phrase-game #submit-btn { width: 48px; }
+@media (min-height: 791px) and (max-height: 880px) {
+ #setup-screen.reverse-setup h1 { font-size: 2.15rem; margin-bottom: 6px; line-height: 1.1; }
+ #setup-screen.reverse-setup .settings-block { padding: 8px 10px; margin-bottom: 8px; }
+ #setup-screen.reverse-setup .mode-btn { padding: 9px 4px; line-height: 1.2; }
+ #setup-screen.reverse-setup .block-title { margin-bottom: 6px; }
+}
 @media (max-height: 790px) {
  #setup-screen h1 { font-size: 2.15rem; margin-bottom: 6px; line-height: 1.1; }
  #setup-screen .settings-block { padding: 8px 10px; margin-bottom: 8px; }

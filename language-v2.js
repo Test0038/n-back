@@ -4,6 +4,8 @@ const PART_KEYS = Object.keys(PART_NAMES);
 let selectedParts = new Set(['noun']);
 let languageKind = 'word';
 let languageEnabled = true;
+let reverseByLength = false, reverseLetterCount = 4;
+let syncingReverseWheel = false;
 let wordData = null, manifestData = null, dataPromise = null;
 let phraseDeck = [];
 let preparing = false;
@@ -12,48 +14,123 @@ const wordInput = document.getElementById('native-input');
 const startButtonMarkup = document.getElementById('start-btn').innerHTML;
 function isPhraseMode() { return currentMode.startsWith('phrase:'); }
 function isReverseMode() { return currentMode.startsWith('reverse:'); }
+function isFilteredReverseMode() { return isReverseMode() && currentMode.split(':').length === 3; }
 function modeName(mode) {
     if (MODE_NAMES[mode]) return MODE_NAMES[mode];
     if (PART_NAMES[mode]) return PART_NAMES[mode];
-    const [kind, value] = mode.split(':');
+    const [kind, value, length] = mode.split(':');
     if (kind === 'phrase') return 'Фраза · ' + value + ' сл.';
     const names = value === 'mix' ? 'Микс' : (value || '').split('+').map(k => PART_NAMES[k] || k).join(' + ');
-    return kind === 'reverse' ? 'Обратное слово · ' + names : names || mode;
+    return kind === 'reverse' ? 'Обратное слово · ' + (length ? length + ' букв · ' : '') + names : names || mode;
 }
 function languageModeKey() {
     const parts = PART_KEYS.filter(k => selectedParts.has(k));
     const key = parts.length === PART_KEYS.length ? 'mix' : parts.join('+');
     if (languageKind === 'phrase') return 'phrase:' + getWheelValue('p');
-    if (languageKind === 'reverse') return 'reverse:' + key;
+    if (languageKind === 'reverse') return 'reverse:' + key + (reverseByLength ? ':' + reverseLetterCount : '');
     return parts.length === 1 || key === 'mix' ? key : 'words:' + key;
 }
 function refreshLanguageSelection() {
     languageEnabled = true; isMathMode = false;
     currentMode = languageModeKey();
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('[data-pos]').forEach(b => {b.classList.toggle('active', selectedParts.has(b.dataset.pos)); b.setAttribute('aria-pressed',selectedParts.has(b.dataset.pos));});
-    document.getElementById('mix-btn').classList.toggle('active',selectedParts.size === PART_KEYS.length);
-    document.getElementById('reverse-btn').classList.toggle('active',languageKind === 'reverse');
-    document.getElementById('phrase-btn').classList.toggle('active',languageKind === 'phrase');
+    const phrase = languageKind === 'phrase';
+    document.querySelectorAll('[data-pos]').forEach(b => {
+        const active = !phrase && selectedParts.has(b.dataset.pos);
+        b.classList.toggle('active', active); b.setAttribute('aria-pressed', active); b.disabled = phrase;
+    });
+    const mix = document.getElementById('mix-btn');
+    mix.disabled = phrase;
+    setLanguageButton('mix-btn', !phrase && selectedParts.size === PART_KEYS.length);
+    setLanguageButton('reverse-btn', languageKind === 'reverse');
+    setLanguageButton('phrase-btn', phrase);
+    refreshReverseControls();
 }
 function selectPart(key) {
-    if (!languageEnabled || languageKind === 'phrase') { selectedParts = new Set([key]); languageKind = 'word'; }
+    if (languageEnabled && languageKind === 'phrase') return;
+    if (!['noun','verb','adj','adv'].includes(key)) return;
+    // Hidden categories belong only to Mix, never to a custom visible selection.
+    selectedParts.delete('pron'); selectedParts.delete('num');
+    if (!languageEnabled) { selectedParts = new Set([key]); languageKind = 'word'; }
     else if (selectedParts.has(key)) { if (selectedParts.size > 1) selectedParts.delete(key); }
     else selectedParts.add(key);
     refreshLanguageSelection();
 }
 function selectMix() {
+    if (languageEnabled && languageKind === 'phrase') return;
     const reset = languageEnabled && selectedParts.size === PART_KEYS.length;
-    if (!languageEnabled || (reset && languageKind === 'phrase')) languageKind = 'word';
+    if (!languageEnabled) languageKind = 'word';
     selectedParts = new Set(reset ? ['noun'] : PART_KEYS);
     refreshLanguageSelection();
 }
 function selectLanguageKind(kind) {
     languageKind = languageEnabled && languageKind === kind ? 'word' : kind;
-    if (languageKind === 'phrase') selectedParts = new Set(PART_KEYS);
     refreshLanguageSelection();
 }
-function leaveLanguageMode() { languageEnabled = false; }
+function leaveLanguageMode() {
+    languageEnabled = false;
+    document.querySelectorAll('[data-pos], #mix-btn').forEach(b => { b.disabled = false; b.setAttribute('aria-pressed', false); });
+    ['reverse-btn','phrase-btn'].forEach(id => document.getElementById(id).setAttribute('aria-pressed', false));
+    refreshReverseControls();
+}
+function setLanguageButton(id, active) {
+    const button = document.getElementById(id);
+    button.classList.toggle('active', active); button.setAttribute('aria-pressed', active);
+}
+function selectReverseFilter(byLength) {
+    if (!languageEnabled || languageKind !== 'reverse') return;
+    reverseByLength = byLength;
+    refreshLanguageSelection();
+}
+// Count letters, not punctuation: e.g. «кто-то» has five letters.
+function wordLetterCount(word) { return (word.match(/[а-яё]/gi) || []).length; }
+function selectedWordPool(data) {
+    const pool = [...new Set(PART_KEYS.filter(k => selectedParts.has(k)).flatMap(k => data[k]))];
+    return languageKind === 'reverse' && reverseByLength ? pool.filter(w => wordLetterCount(w) === reverseLetterCount) : pool;
+}
+function refreshReverseControls() {
+    const visible = languageEnabled && languageKind === 'reverse';
+    setupScreen.classList.toggle('reverse-setup', visible);
+    const panel = document.getElementById('reverse-settings');
+    const wasHidden = panel.classList.contains('hidden');
+    panel.classList.toggle('hidden', !visible);
+    if (visible && (wasHidden || !wheels.l)) {
+        syncingReverseWheel = true;
+        try {
+            if (!wheels.l) {
+                const picker = panel.querySelector('.picker');
+                buildWheelPicker(picker);
+                picker.addEventListener('pickerchange', () => {
+                    if (syncingReverseWheel || !languageEnabled || languageKind !== 'reverse' || !picker.getClientRects().length) return;
+                    reverseLetterCount = getWheelValue('l'); reverseByLength = true;
+                    refreshLanguageSelection();
+                });
+            }
+            setWheelValue('l', reverseLetterCount);
+        } finally { syncingReverseWheel = false; }
+    }
+    setLanguageButton('reverse-all-btn', visible && !reverseByLength);
+    setLanguageButton('reverse-length-btn', visible && reverseByLength);
+    panel.querySelector('.reverse-length-option').classList.toggle('inactive', !reverseByLength);
+    updateReversePoolStatus();
+}
+function updateReversePoolStatus() {
+    const status = document.getElementById('reverse-pool-status');
+    const visible = languageEnabled && languageKind === 'reverse';
+    let insufficient = false;
+    if (visible) {
+        if (!wordData) status.textContent = 'Загрузка словаря…';
+        else {
+            const count = selectedWordPool(wordData).length, minimum = getWheelValue('n') + 1;
+            insufficient = reverseByLength && count < minimum;
+            status.textContent = 'Доступно слов: ' + count.toLocaleString('ru-RU') + (insufficient
+                ? '. Для N=' + getWheelValue('n') + ' нужно ≥ ' + minimum + '. Добавьте категории или измените длину.'
+                : reverseByLength && count < 50 ? ' · Возможны частые повторы.' : '');
+        }
+    }
+    status.classList.toggle('insufficient', insufficient);
+    document.getElementById('start-btn').disabled = preparing || insufficient;
+}
 async function readData(path) {
     const response = await fetch('./data/' + path);
     if (!response.ok) throw new Error('Data: ' + response.status);
@@ -67,6 +144,7 @@ function loadWordData() {
         wordsNoun=wordData.noun;wordsVerb=wordData.verb;wordsAdj=wordData.adj;
         wordsMix=[...new Set(PART_KEYS.flatMap(k=>wordData[k]))];
         wordsDual=wordsNoun.filter(w=>w.length<=9);
+        updateReversePoolStatus();
         return wordData;
     }).catch(error => { dataPromise = null; throw error; });
     return dataPromise;
@@ -117,6 +195,8 @@ async function prepareGame() {
     setupScreen.inert=true;
     try {
         if (languageEnabled) {
+            // Capture the visible row even if its scroll-render callback has not run yet.
+            if (languageKind === 'reverse' && reverseByLength) reverseLetterCount = getWheelValue('l');
             currentMode=languageModeKey();
             if (isPhraseMode()) {
                 const count=Math.max(getWheelValue('r'),getWheelValue('n')+1);
@@ -124,7 +204,11 @@ async function prepareGame() {
                 phraseDeck=prepared.deck;activeWordList=phraseDeck.slice();prepared.commit();
             } else {
                 const data=await loadWordData();
-                activeWordList=[...new Set(PART_KEYS.filter(k=>selectedParts.has(k)).flatMap(k=>data[k]))];
+                activeWordList=selectedWordPool(data);
+                if (isFilteredReverseMode() && activeWordList.length <= settings.n) {
+                    updateReversePoolStatus();
+                    return;
+                }
             }
         }
         // Keep DUAL's original short-noun restriction and the original mixed-mode algorithm.
@@ -142,6 +226,7 @@ async function prepareGame() {
         return;
     } finally {
         preparing=false;button.disabled=false;setupScreen.inert=false;setupScreen.classList.remove('loading');
+        updateReversePoolStatus();
         if (isGameRunning) button.innerHTML=original;
     }
 }
@@ -162,5 +247,7 @@ function fitPhrase() {
 phraseInput.addEventListener('input',resizePhraseInput);
 phraseInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();submitMath();}});
 if (viewport) viewport.addEventListener('resize',()=>{if(isPhraseMode())resizePhraseInput();});
+document.querySelector('[data-key="n"]').addEventListener('pickerchange', updateReversePoolStatus);
+refreshLanguageSelection();
 // Warm only the modest vocabulary. Phrase files are loaded on demand.
 setTimeout(()=>loadWordData().catch(()=>{}),500);

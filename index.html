@@ -361,13 +361,19 @@
                         <button class="mode-btn" data-pos="verb" onclick="selectPart('verb')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Глаголы</button>
                         <button class="mode-btn" data-pos="adj" onclick="selectPart('adj')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 2.4 7.4H22l-6 4.6 2.3 7.4-6.3-4.6L5.7 21l2.3-7.4-6-4.6h7.6z"/></svg>Прилагательные</button>
                         <button class="mode-btn" data-pos="adv" onclick="selectPart('adv')">Наречия</button>
-                        <button class="mode-btn" data-pos="pron" onclick="selectPart('pron')">Местоимения</button>
-                        <button class="mode-btn" data-pos="num" onclick="selectPart('num')">Числительные</button>
                     </div>
                     <div class="language-options">
                         <button class="mode-btn" id="mix-btn" onclick="selectMix()">Микс</button>
                         <button class="mode-btn" id="reverse-btn" onclick="selectLanguageKind('reverse')">Обратное слово</button>
                         <div class="phrase-option"><button class="mode-btn" id="phrase-btn" onclick="selectLanguageKind('phrase')">Фраза</button><div class="picker phrase-picker" data-key="p" data-min="1" data-max="10" data-def="3" data-height="60" aria-label="Слов во фразе"><div class="sel"></div><div class="wlist"></div></div></div>
+                    </div>
+                    <div id="reverse-settings" class="hidden">
+                        <div class="reverse-options" role="group" aria-label="Длина обратного слова">
+                            <button class="mode-btn" id="reverse-all-btn" onclick="selectReverseFilter(false)">Все слова</button>
+                            <button class="mode-btn" id="reverse-length-btn" onclick="selectReverseFilter(true)">По длине</button>
+                            <div class="reverse-length-option"><div class="picker reverse-picker" data-key="l" data-min="4" data-max="19" data-def="4" data-height="60" aria-label="Букв в слове"><div class="sel"></div><div class="wlist"></div></div><span>букв</span></div>
+                        </div>
+                        <div id="reverse-pool-status" role="status" aria-live="polite"></div>
                     </div>
                     <div class="mode-grid"><button class="mode-btn super-btn" onclick="setMode('dual', this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>DUAL: СЛОВО + ПОЗИЦИЯ</button></div>
                 </div>
@@ -774,7 +780,7 @@
                 targetInputs = nLevel + 1;
                 setWheelValue('r', targetInputs);
             }
-            if (!currentMode.startsWith('math') && currentMode !== 'super_mix' && targetInputs > activeWordList.length) {
+            if (!currentMode.startsWith('math') && currentMode !== 'super_mix' && !isFilteredReverseMode() && targetInputs > activeWordList.length) {
                 targetInputs = activeWordList.length;
             }
 
@@ -1271,7 +1277,7 @@
             values.forEach(v => { const d = document.createElement('div'); d.className = 'witem'; const text = document.createElement('span'); text.textContent = v; d.appendChild(text); list.appendChild(d); });
             const items = [...list.querySelectorAll('.witem')];
             // Snap the untransformed rows; rotate only the numbers inside them.
-            const WH_CENTER = list.clientHeight / 2, WH_PAD = WH_CENTER - WH_ITEM / 2;
+            const WH_CENTER = (+picker.dataset.height || list.clientHeight) / 2, WH_PAD = WH_CENTER - WH_ITEM / 2;
             list.style.padding = `${WH_PAD}px 0`;
             picker.querySelector('.sel').style.top = `${WH_PAD}px`;
             let raf = null, settleTimer = null, touching = false;
@@ -1295,8 +1301,10 @@
                     text.style.color = Math.abs(dist) < WH_ITEM / 2 ? '#ffffff' : '#9fa0a8';
                 });
                 const value = String(values[idx()]);
+                const changed = picker.dataset.current !== value;
                 picker.dataset.current = value;
                 picker.setAttribute('aria-valuenow', value);
+                if (changed) picker.dispatchEvent(new Event('pickerchange'));
             }
             function snap() {
                 clearTimeout(settleTimer);
@@ -1339,10 +1347,9 @@
             let i = w.values.indexOf(v);
             if (i < 0) { i = 0; let best = Infinity; w.values.forEach((val, j) => { const d = Math.abs(val - v); if (d < best) { best = d; i = j; } }); }
             w.list.scrollTop = i * WH_ITEM;
-            w.picker.dataset.current = w.values[i];
             w.snap();
         }
-        document.querySelectorAll('.picker').forEach(buildWheelPicker);
+        document.querySelectorAll('.picker:not([data-key="l"])').forEach(buildWheelPicker);
 
         // Автопауза при повороте в альбомную ориентацию
         const landscapeMq = window.matchMedia('(orientation: landscape)');
