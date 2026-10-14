@@ -44,6 +44,7 @@ function refreshLanguageSelection() {
     setLanguageButton('mix-btn', !phrase && selectedParts.size === PART_KEYS.length);
     setLanguageButton('reverse-btn', languageKind === 'reverse');
     setLanguageButton('phrase-btn', phrase);
+    refreshPhraseControls();
     refreshReverseControls();
 }
 function selectPart(key) {
@@ -71,7 +72,19 @@ function leaveLanguageMode() {
     languageEnabled = false;
     document.querySelectorAll('[data-pos], #mix-btn').forEach(b => { b.disabled = false; b.setAttribute('aria-pressed', false); });
     ['reverse-btn','phrase-btn'].forEach(id => document.getElementById(id).setAttribute('aria-pressed', false));
+    refreshPhraseControls();
     refreshReverseControls();
+}
+function refreshPhraseControls() {
+    const visible = languageEnabled && languageKind === 'phrase';
+    const panel = document.getElementById('phrase-settings');
+    if (!visible && !panel.classList.contains('hidden')) setWheelValue('p', getWheelValue('p'));
+    setupScreen.classList.toggle('phrase-setup', visible);
+    panel.classList.toggle('hidden', !visible);
+    document.getElementById('phrase-btn').setAttribute('aria-expanded', visible);
+    if (visible) wheels.p.resize();
+    const length = getWheelValue('p');
+    document.getElementById('phrase-length-caption').textContent = length + ' ' + (length === 1 ? 'слово' : length <= 4 ? 'слова' : 'слов');
 }
 function setLanguageButton(id, active) {
     const button = document.getElementById(id);
@@ -93,7 +106,12 @@ function refreshReverseControls() {
     setupScreen.classList.toggle('reverse-setup', visible);
     const panel = document.getElementById('reverse-settings');
     const wasHidden = panel.classList.contains('hidden');
+    if (!visible && !wasHidden && wheels.l) {
+        reverseLetterCount = getWheelValue('l');
+        setWheelValue('l', reverseLetterCount);
+    }
     panel.classList.toggle('hidden', !visible);
+    document.getElementById('reverse-btn').setAttribute('aria-expanded', visible);
     if (visible && (wasHidden || !wheels.l)) {
         syncingReverseWheel = true;
         try {
@@ -112,6 +130,7 @@ function refreshReverseControls() {
     setLanguageButton('reverse-all-btn', visible && !reverseByLength);
     setLanguageButton('reverse-length-btn', visible && reverseByLength);
     panel.querySelector('.reverse-length-option').classList.toggle('inactive', !reverseByLength);
+    refreshMenuWheelLayout();
     updateReversePoolStatus();
 }
 function updateReversePoolStatus() {
@@ -124,7 +143,7 @@ function updateReversePoolStatus() {
             const count = selectedWordPool(wordData).length, minimum = getWheelValue('n') + 1;
             insufficient = reverseByLength && count < minimum;
             status.textContent = 'Доступно слов: ' + count.toLocaleString('ru-RU') + (insufficient
-                ? '. Для N=' + getWheelValue('n') + ' нужно ≥ ' + minimum + '. Добавьте категории или измените длину.'
+                ? ' · Нужно ≥ ' + minimum
                 : reverseByLength && count < 50 ? ' · Возможны частые повторы.' : '');
         }
     }
@@ -155,7 +174,7 @@ function randomSeed() { const a = new Uint32Array(1); crypto.getRandomValues(a);
 async function preparePhrases(length,count) {
     if (!manifestData) manifestData = await readData('phrases-v2.json');
     const info = manifestData.lengths[length];
-    const key = 'nback_phrase_cursor_v2_' + manifestData.revision + '_' + length;
+    const key = 'nback_phrase_cursor_v2_' + (info.revision || manifestData.revision) + '_' + length;
     let state;
     try {state=JSON.parse(localStorage.getItem(key));} catch (_) {}
     if (!state || !Number.isInteger(state.cursor) || state.cursor<0 || state.cursor>=info.count || !Number.isInteger(state.seed) || state.seed<0 || state.seed>0xffffffff) state={cursor:0,seed:randomSeed()};
@@ -248,6 +267,10 @@ phraseInput.addEventListener('input',resizePhraseInput);
 phraseInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();submitMath();}});
 if (viewport) viewport.addEventListener('resize',()=>{if(isPhraseMode())resizePhraseInput();});
 document.querySelector('[data-key="n"]').addEventListener('pickerchange', updateReversePoolStatus);
+document.querySelector('[data-key="p"]').addEventListener('pickerchange', () => {
+    refreshPhraseControls();
+    if (languageEnabled && languageKind === 'phrase') currentMode = languageModeKey();
+});
 refreshLanguageSelection();
 // Warm only the modest vocabulary. Phrase files are loaded on demand.
 setTimeout(()=>loadWordData().catch(()=>{}),500);

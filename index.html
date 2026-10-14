@@ -351,8 +351,11 @@
 
         <div id="setup-screen">
             <div class="menu-content">
-                <button class="stats-cbtn" id="stats-corner-btn" onclick="showStats()" aria-label="Статистика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" width="20" height="20"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="11"/></svg></button>
-                <h1>N-Back</h1>
+                <div class="setup-header">
+                    <div aria-hidden="true"></div><h1>N-Back</h1>
+                    <button class="stats-cbtn" id="stats-corner-btn" onclick="showStats()" aria-label="Статистика"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" width="20" height="20"><line x1="5" y1="20" x2="5" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="19" y1="20" x2="19" y2="11"/></svg></button>
+                </div>
+                <div class="setup-mode-groups">
 
                 <div class="settings-block">
                     <div class="block-title">ЯЗЫК</div>
@@ -364,14 +367,22 @@
                     </div>
                     <div class="language-options">
                         <button class="mode-btn" id="mix-btn" onclick="selectMix()">Микс</button>
-                        <button class="mode-btn" id="reverse-btn" onclick="selectLanguageKind('reverse')">Обратное слово</button>
-                        <div class="phrase-option"><button class="mode-btn" id="phrase-btn" onclick="selectLanguageKind('phrase')">Фраза</button><div class="picker phrase-picker" data-key="p" data-min="1" data-max="10" data-def="3" data-height="60" aria-label="Слов во фразе"><div class="sel"></div><div class="wlist"></div></div></div>
+                        <button class="mode-btn" id="reverse-btn" onclick="selectLanguageKind('reverse')" aria-expanded="false" aria-controls="reverse-settings">Обратное слово<svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+                        <button class="mode-btn" id="phrase-btn" onclick="selectLanguageKind('phrase')" aria-expanded="false" aria-controls="phrase-settings">Фраза<svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
                     </div>
-                    <div id="reverse-settings" class="hidden">
+                    <div id="phrase-settings" class="language-submenu hidden" role="group" aria-label="Параметры фразы">
+                        <div class="phrase-options">
+                            <div class="submenu-label">Слов во фразе<span id="phrase-length-caption">3 слова</span></div>
+                            <div class="picker phrase-picker" data-key="p" data-min="1" data-max="10" data-def="3" data-height="72" aria-label="Слов во фразе"><div class="sel"></div><div class="wlist"></div></div>
+                        </div>
+                    </div>
+                    <div id="reverse-settings" class="language-submenu hidden">
                         <div class="reverse-options" role="group" aria-label="Длина обратного слова">
-                            <button class="mode-btn" id="reverse-all-btn" onclick="selectReverseFilter(false)">Все слова</button>
-                            <button class="mode-btn" id="reverse-length-btn" onclick="selectReverseFilter(true)">По длине</button>
-                            <div class="reverse-length-option"><div class="picker reverse-picker" data-key="l" data-min="4" data-max="19" data-def="4" data-height="60" aria-label="Букв в слове"><div class="sel"></div><div class="wlist"></div></div><span>букв</span></div>
+                            <div class="reverse-filter-controls"><div class="submenu-label">Длина слова</div><div class="reverse-filter-buttons">
+                                <button class="mode-btn" id="reverse-all-btn" onclick="selectReverseFilter(false)">Все слова</button>
+                                <button class="mode-btn" id="reverse-length-btn" onclick="selectReverseFilter(true)">По длине</button>
+                            </div></div>
+                            <div class="reverse-length-option"><div class="picker reverse-picker" data-key="l" data-min="4" data-max="19" data-def="4" data-height="72" aria-label="Букв в слове"><div class="sel"></div><div class="wlist"></div></div></div>
                         </div>
                         <div id="reverse-pool-status" role="status" aria-live="polite"></div>
                     </div>
@@ -390,6 +401,8 @@
                     </div>
                 </div>
 
+                </div>
+                <div class="setup-controls">
                 <div class="params">
                     <div class="param">
                         <label>Уровень N</label>
@@ -406,6 +419,7 @@
                 </div>
 
                 <button class="main-btn" id="start-btn" onclick="prepareGame()"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg> НАЧАТЬ</button>
+                </div>
             </div>
         </div>
 
@@ -1277,9 +1291,10 @@
             values.forEach(v => { const d = document.createElement('div'); d.className = 'witem'; const text = document.createElement('span'); text.textContent = v; d.appendChild(text); list.appendChild(d); });
             const items = [...list.querySelectorAll('.witem')];
             // Snap the untransformed rows; rotate only the numbers inside them.
-            const WH_CENTER = (+picker.dataset.height || list.clientHeight) / 2, WH_PAD = WH_CENTER - WH_ITEM / 2;
-            list.style.padding = `${WH_PAD}px 0`;
-            picker.querySelector('.sel').style.top = `${WH_PAD}px`;
+            let WH_CENTER = (+picker.dataset.height || WH_H) / 2;
+            let WH_PAD = WH_CENTER - WH_ITEM / 2;
+            let currentIndex = Math.max(0, values.indexOf(def));
+            let lastHeight = 0, syncingGeometry = false;
             let raf = null, settleTimer = null, touching = false;
             let startY = 0, moved = false;
             picker.tabIndex = 0;
@@ -1287,8 +1302,19 @@
             picker.setAttribute('aria-valuemin', min);
             picker.setAttribute('aria-valuemax', max);
             if (!picker.hasAttribute('aria-label')) picker.setAttribute('aria-label', picker.parentElement.querySelector('label').textContent);
-            function idx() { return Math.max(0, Math.min(values.length - 1, Math.round(list.scrollTop / WH_ITEM))); }
+            function isVisible() { return list.clientHeight > 0 && picker.getClientRects().length > 0; }
+            function scrollIndex() { return Math.max(0, Math.min(values.length - 1, Math.round(list.scrollTop / WH_ITEM))); }
+            function idx() { return isVisible() && !syncingGeometry && list.clientHeight === lastHeight ? scrollIndex() : currentIndex; }
+            function publishValue() {
+                const value = String(values[currentIndex]);
+                const changed = picker.dataset.current !== value;
+                picker.dataset.current = value;
+                picker.setAttribute('aria-valuenow', value);
+                if (changed) picker.dispatchEvent(new Event('pickerchange'));
+            }
             function render() {
+                if (!isVisible()) return;
+                currentIndex = idx();
                 const sc = list.scrollTop + WH_CENTER;
                 items.forEach((it, i) => {
                     const text = it.firstElementChild;
@@ -1300,20 +1326,41 @@
                     text.style.opacity = Math.max(0.12, 1 - Math.abs(dist) / 80);
                     text.style.color = Math.abs(dist) < WH_ITEM / 2 ? '#ffffff' : '#9fa0a8';
                 });
-                const value = String(values[idx()]);
-                const changed = picker.dataset.current !== value;
-                picker.dataset.current = value;
-                picker.setAttribute('aria-valuenow', value);
-                if (changed) picker.dispatchEvent(new Event('pickerchange'));
+                publishValue();
+            }
+            function syncGeometry(force = false) {
+                const height = list.clientHeight;
+                if (!height || !picker.getClientRects().length) { lastHeight = 0; return; }
+                if (!force && height === lastHeight) return;
+                if (force && height === lastHeight) currentIndex = scrollIndex();
+                syncingGeometry = true;
+                WH_CENTER = height / 2;
+                WH_PAD = WH_CENTER - WH_ITEM / 2;
+                list.style.padding = `${WH_PAD}px 0`;
+                picker.querySelector('.sel').style.top = `${WH_CENTER - picker.querySelector('.sel').offsetHeight / 2}px`;
+                list.scrollTop = currentIndex * WH_ITEM;
+                lastHeight = height;
+                syncingGeometry = false;
+                render();
+            }
+            function selectIndex(index) {
+                syncGeometry();
+                currentIndex = Math.max(0, Math.min(values.length - 1, index));
+                if (isVisible()) list.scrollTop = currentIndex * WH_ITEM;
+                publishValue();
+                render();
             }
             function snap() {
                 clearTimeout(settleTimer);
-                if (touching) return;
-                list.scrollTop = idx() * WH_ITEM;
+                if (touching || !isVisible()) return;
+                currentIndex = idx();
+                list.scrollTop = currentIndex * WH_ITEM;
                 render();
             }
             function queueSnap() { clearTimeout(settleTimer); settleTimer = setTimeout(snap, 150); }
             list.addEventListener('scroll', () => {
+                if (list.clientHeight !== lastHeight) { syncGeometry(); return; }
+                if (!syncingGeometry && isVisible()) currentIndex = scrollIndex();
                 if (!raf) raf = requestAnimationFrame(() => { raf = null; render(); });
                 if (!touching) queueSnap();
             }, {passive:true});
@@ -1335,20 +1382,19 @@
                 else if (e.key === 'Home') i = 0; else if (e.key === 'End') i = values.length - 1; else return;
                 e.preventDefault(); list.scrollTop = Math.max(0, Math.min(values.length - 1, i)) * WH_ITEM; snap();
             });
-            const startIdx = Math.max(0, values.indexOf(def));
-            list.scrollTop = startIdx * WH_ITEM;
-            picker.dataset.current = values[startIdx];
-            render();
-            wheels[key] = { picker, list, values, render, snap, value: () => values[idx()] };
+            wheels[key] = { picker, list, values, render, snap, resize: () => syncGeometry(true), selectIndex, value: () => values[idx()] };
+            publishValue();
+            syncGeometry(true);
+            if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => syncGeometry()).observe(picker);
         }
         function getWheelValue(key) { return wheels[key].value(); }
         function setWheelValue(key, v) {
             const w = wheels[key]; if (!w) return;
             let i = w.values.indexOf(v);
             if (i < 0) { i = 0; let best = Infinity; w.values.forEach((val, j) => { const d = Math.abs(val - v); if (d < best) { best = d; i = j; } }); }
-            w.list.scrollTop = i * WH_ITEM;
-            w.snap();
+            w.selectIndex(i);
         }
+        function refreshMenuWheelLayout() { Object.values(wheels).forEach(w => w.resize()); }
         document.querySelectorAll('.picker:not([data-key="l"])').forEach(buildWheelPicker);
 
         // Автопауза при повороте в альбомную ориентацию
