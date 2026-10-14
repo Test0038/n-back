@@ -1408,15 +1408,51 @@
         function refreshMenuWheelLayout() { Object.values(wheels).forEach(w => w.resize()); }
         document.querySelectorAll('.picker:not([data-key="l"])').forEach(buildWheelPicker);
 
-        // Choose spacing from the actual safe content height, not the device height.
+        // Fit the visible menu content; the remaining space belongs to the wheels.
+        let setupLayoutFrame = null;
         function fitSetupLayout() {
-            const height = setupScreen.clientHeight;
-            if (!height) return;
-            const density = height < 580 ? 'small' : height < 660 ? 'tight' : height < 810 ? 'compact' : 'regular';
-            if (setupScreen.dataset.density !== density) setupScreen.dataset.density = density;
+            if (!setupScreen.clientHeight) return;
+            const selected = Object.fromEntries(Object.entries(wheels).map(([key, wheel]) => [key, wheel.value()]));
+            const params = setupScreen.querySelector('.params');
+            const label = params.querySelector('label');
+            const minimumWheel = setupScreen.clientHeight >= 760 ? 72 : 60;
+            const room = () => params.getBoundingClientRect().height - label.getBoundingClientRect().height - parseFloat(getComputedStyle(label).marginBottom);
+            setupScreen.dataset.density = 'regular';
+            setupScreen.style.setProperty('--setup-fit', '1');
+            if (room() < minimumWheel) {
+                setupScreen.style.setProperty('--setup-fit', '0');
+                if (room() >= minimumWheel) {
+                    let low = 0, high = 1;
+                    for (let i = 0; i < 7; i++) {
+                        const middle = (low + high) / 2;
+                        setupScreen.style.setProperty('--setup-fit', String(middle));
+                        if (room() >= minimumWheel) low = middle; else high = middle;
+                    }
+                    setupScreen.style.setProperty('--setup-fit', String(low));
+                } else if (room() >= 54) {
+                    // Keep full-sized mode buttons when the wheel is only slightly shorter.
+                    setupScreen.style.setProperty('--setup-fit', '0');
+                } else {
+                    setupScreen.dataset.density = 'tight';
+                    if (room() < 54) setupScreen.dataset.density = 'small';
+                }
+            }
+            for (const [key, value] of Object.entries(selected)) setWheelValue(key, value);
+            refreshMenuWheelLayout();
         }
-        if (typeof ResizeObserver !== 'undefined') new ResizeObserver(fitSetupLayout).observe(setupScreen);
-        window.addEventListener('resize', fitSetupLayout);
+        function scheduleSetupLayout() {
+            if (setupLayoutFrame !== null) return;
+            setupLayoutFrame = requestAnimationFrame(() => { setupLayoutFrame = null; fitSetupLayout(); });
+        }
+        if (typeof ResizeObserver !== 'undefined') {
+            const setupObserver = new ResizeObserver(scheduleSetupLayout);
+            setupObserver.observe(setupScreen);
+            setupObserver.observe(setupScreen.querySelector('.setup-mode-groups'));
+        }
+        new MutationObserver(scheduleSetupLayout).observe(setupScreen, { attributes: true, attributeFilter: ['class'] });
+        window.addEventListener('resize', scheduleSetupLayout);
+        document.fonts.ready.then(scheduleSetupLayout);
+        document.fonts.addEventListener('loadingdone', scheduleSetupLayout);
         fitSetupLayout();
 
         // Автопауза при повороте в альбомную ориентацию
