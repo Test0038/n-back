@@ -9,11 +9,11 @@
 #game-screen.phrase-game #word-card.phrase-scroll { justify-content: flex-start; }
 #game-screen.phrase-game #word-display:not(.countdown-big) { flex-shrink: 0; font-size: 30px; font-weight: 700; text-transform: none; letter-spacing: normal; line-height: 1.35; word-break: normal; overflow-wrap: normal; -webkit-hyphens: auto; hyphens: auto; text-wrap: balance; }
 #game-screen.phrase-game #phrase-input { font-weight: 700; }
-#word-display.single-line-word { width: 100%; min-width: 0; max-width: 100%; padding: 0 2px; white-space: nowrap; word-break: normal; overflow-wrap: normal; -webkit-hyphens: none; hyphens: none; }
+#word-display.single-line-word { width: 100%; min-width: 0; max-width: 100%; padding: 0 5px; white-space: nowrap; word-break: normal; overflow-wrap: normal; -webkit-hyphens: none; hyphens: none; }
 .witem { will-change: auto; transform-style: preserve-3d; }
 .wlist { overflow-anchor: none; }
 .witem > span { display: block; transform-origin: center center; backface-visibility: hidden; }
-#game-screen.phrase-game #submit-btn { width: 48px; }
+#game-screen.phrase-game #submit-btn { display: none !important; }
 
 /* Fit the main screen to its safe content area; only the pickers scroll. */
 #app-viewport.setup-active { height:100%; height:100dvh; min-height:0; transition:none; }
