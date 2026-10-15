@@ -945,7 +945,7 @@
             }
 
             wordDisplay.innerText = displayContent;
-            if (isPhraseMode()) requestAnimationFrame(fitPhrase);
+            if (isPhraseMode()) { wordCard.scrollTop = 0; requestAnimationFrame(fitPhrase); }
 
             if (currentMode === 'dual') {
                 if (isGenerating) placeBall(history[history.length - 1].pos);
@@ -994,6 +994,7 @@
                 
                 startMemoTimer();
             }
+            fitWordDisplay();
         }
 
         function submitMath() {

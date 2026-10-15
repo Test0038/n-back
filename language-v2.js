@@ -236,6 +236,9 @@ async function prepareGame() {
         wordInput.classList.toggle('hidden',isPhraseMode());
         phraseInput.classList.toggle('hidden',!isPhraseMode());
         gameScreen.classList.toggle('phrase-game',isPhraseMode());
+        wordDisplay.classList.remove('single-line-word');
+        wordCard.classList.remove('phrase-scroll');
+        wordCard.style.removeProperty('--phrase-card-limit');
         wordDisplay.style.fontSize='';wordCard.style.minHeight='';wordCard.style.padding='';
         for (const [key,value] of Object.entries(settings)) setWheelValue(key,value);
         startGame();
@@ -253,16 +256,66 @@ function normalizePhrase(s) { return s.toLowerCase().replace(/ё/g,'е').replace
 function resizePhraseInput() {
     if (!isPhraseMode()) return;
     phraseInput.style.height='auto';
-    phraseInput.style.height=Math.min(innerWidth<350?90:150,Math.max(60,phraseInput.scrollHeight+2))+'px';
+    phraseInput.style.height=Math.min(innerWidth<350?90:150,Math.max(70,phraseInput.scrollHeight+2))+'px';
     requestAnimationFrame(fitPhrase);
 }
 function fitPhrase() {
-    if (!isPhraseMode() || wordDisplay.classList.contains('countdown-big')) return;
-    wordDisplay.style.fontSize='22px';
-    const padding=needsInput?34:78;
-    wordCard.style.padding=needsInput?'16px 0':'40px 0 36px';
-    wordCard.style.minHeight=Math.max(165,wordDisplay.scrollHeight+padding)+'px';
+    if (!isPhraseMode() || gameScreen.classList.contains('hidden') || wordDisplay.classList.contains('countdown-big')) return;
+    wordDisplay.style.fontSize='30px';
+    const header=gameScreen.querySelector('.header'), headerStyle=getComputedStyle(header), cardStyle=getComputedStyle(wordCard);
+    const room=gameScreen.clientHeight-header.offsetHeight-parseFloat(headerStyle.marginTop)-parseFloat(headerStyle.marginBottom)
+        -parseFloat(cardStyle.marginTop)-parseFloat(cardStyle.marginBottom);
+    const textHeight=wordDisplay.scrollHeight;
+    let top=needsInput?16:40, bottom=needsInput?16:36;
+    const preferred=Math.max(165,textHeight+top+bottom+2);
+    let inputHeight=0;
+    if (needsInput) {
+        inputHeight=Math.max(70,Math.min(parseFloat(phraseInput.style.height)||70,room-preferred));
+        phraseInput.style.height=inputHeight+'px';
+    }
+    const limit=Math.max(1,room-inputHeight);
+    if (needsInput && preferred>limit) top=bottom=Math.max(4,Math.min(16,(limit-textHeight-2)/2));
+    const required=textHeight+top+bottom+2;
+    wordCard.style.padding=top+'px 0 '+bottom+'px';
+    wordCard.style.setProperty('--phrase-card-limit',limit+'px');
+    wordCard.style.minHeight=Math.min(limit,Math.max(165,required))+'px';
+    wordCard.classList.toggle('phrase-scroll',required>limit);
 }
+// Measure the rendered word in its card, including uppercase glyphs and the loaded font.
+// Only presentation changes here: generated questions, answers, timing and scoring stay intact.
+function fitWordDisplay() {
+    const isWord = !isPhraseMode() && !wordDisplay.classList.contains('countdown-big')
+        && history.length > 0 && history[history.length - 1].type === 'word';
+    wordDisplay.classList.toggle('single-line-word', isWord);
+    if (!isWord) {
+        if (!isPhraseMode()) wordDisplay.style.fontSize = '';
+        return;
+    }
+    if (gameScreen.classList.contains('hidden') || !wordDisplay.clientWidth) return;
+    wordDisplay.style.fontSize = '';
+    const style = getComputedStyle(wordDisplay);
+    const available = wordDisplay.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight) - 1;
+    if (available <= 0) return;
+    const range = document.createRange();
+    range.selectNodeContents(wordDisplay);
+    let size = parseFloat(style.fontSize), width = range.getBoundingClientRect().width;
+    // Recheck at the final size because browser font metrics can round fractionally.
+    for (let i = 0; i < 3 && width > available; i++) {
+        size = Math.floor(size * available / width * 100) / 100;
+        wordDisplay.style.fontSize = size + 'px';
+        width = range.getBoundingClientRect().width;
+    }
+}
+let wordFitFrame = null;
+function scheduleWordFit() {
+    if (wordFitFrame !== null) return;
+    wordFitFrame = requestAnimationFrame(() => { wordFitFrame = null; fitWordDisplay(); if (isPhraseMode()) fitPhrase(); });
+}
+new ResizeObserver(scheduleWordFit).observe(wordCard);
+window.addEventListener('resize', scheduleWordFit);
+if (viewport) viewport.addEventListener('resize', scheduleWordFit);
+document.fonts.ready.then(scheduleWordFit);
+document.fonts.addEventListener('loadingdone', scheduleWordFit);
 phraseInput.addEventListener('input',resizePhraseInput);
 phraseInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();submitMath();}});
 if (viewport) viewport.addEventListener('resize',()=>{if(isPhraseMode())resizePhraseInput();});

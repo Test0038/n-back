@@ -47,3 +47,7 @@ Multiword phrase chunks now contain sentences from Tatoeba under CC BY 2.0 FR.
 See phrase-ATTRIBUTION.md and phrase-sources.tsv for contributor names and sentence IDs.
 One-word entries retain the vocabulary license above.
 Hyphenated words count as one whitespace-delimited word.
+
+15 October 2026: removed 893 vocabulary entries exceeding 19 Russian letters
+(hyphens excluded). All entries of 19 letters or fewer were preserved.
+The one-word phrase bank was synchronized; multiword phrases were unchanged.

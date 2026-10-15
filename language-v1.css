@@ -4,10 +4,12 @@
 .reverse-length-option.inactive { opacity: .45; }
 #setup-screen.loading .mode-btn { pointer-events: none; }
 #start-btn:disabled { opacity: .65; }
-#phrase-input { resize: none; min-width: 0; width: 0; min-height: 60px; max-height: 150px; line-height: 1.25; font-size: 22px; overflow-y: auto; }
-#game-screen.phrase-game #word-card { padding: 40px 0 36px; height: auto; max-height: none; flex-shrink: 0; }
-#game-screen.phrase-game #word-display:not(.countdown-big) { font-size: 22px; font-weight: 700; text-transform: none; letter-spacing: normal; line-height: 1.35; word-break: normal; overflow-wrap: normal; -webkit-hyphens: auto; hyphens: auto; text-wrap: balance; }
+#phrase-input { resize: none; min-width: 0; width: 0; min-height: 70px; max-height: 150px; line-height: 1.25; font-size: 30px; overflow-y: auto; }
+#game-screen.phrase-game #word-card { padding: 40px 0 36px; height: auto; max-height: var(--phrase-card-limit, none); overflow-y: auto; flex-shrink: 0; }
+#game-screen.phrase-game #word-card.phrase-scroll { justify-content: flex-start; }
+#game-screen.phrase-game #word-display:not(.countdown-big) { flex-shrink: 0; font-size: 30px; font-weight: 700; text-transform: none; letter-spacing: normal; line-height: 1.35; word-break: normal; overflow-wrap: normal; -webkit-hyphens: auto; hyphens: auto; text-wrap: balance; }
 #game-screen.phrase-game #phrase-input { font-weight: 700; }
+#word-display.single-line-word { width: 100%; min-width: 0; max-width: 100%; padding: 0 2px; white-space: nowrap; word-break: normal; overflow-wrap: normal; -webkit-hyphens: none; hyphens: none; }
 .witem { will-change: auto; transform-style: preserve-3d; }
 .wlist { overflow-anchor: none; }
 .witem > span { display: block; transform-origin: center center; backface-visibility: hidden; }
